@@ -24,9 +24,9 @@ jobs:
   createReleaseIssue:
     runs-on: ubuntu-latest
     steps:
-     - if: contains(github.event.issue.labels.*.name, 'weekly')
+     - if: contains(github.event.issue.labels.*.name, 'release')
        name: Create new Issue
-       uses: bpmn-io/actions/weekly-notes@latest
+       uses: bpmn-io/actions/release-issue@latest
        with:
          template-path: '.docs/RELEASE.md'
          package-path: 'app/package.json'
