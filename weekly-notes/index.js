@@ -23479,17 +23479,10 @@ async function run() {
   };
 
   const issue = github.context.payload.issue;
-  core.debug(`issue: ${JSON.stringify(issue, null, 2)}`);
-
-  const payload = JSON.stringify(github.context.payload, undefined, 2);
-  console.log(`The event payload: ${payload}`);
-
 
   const repository = github.context.payload.repository;
-  core.debug(`repository: ${repository}`);
 
   const token = core.getInput('token');
-  core.debug(`token: ${token}`);
 
   const octokitRest = github.getOctokit(token).rest;
   const _getIssues = async (options) => {
