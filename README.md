@@ -26,7 +26,7 @@ jobs:
     steps:
      - if: contains(github.event.issue.labels.*.name, 'weekly')
        name: Create new Issue
-       uses: bpmn-io/bpmn-io-actions/weekly-notes@latest
+       uses: bpmn-io/actions/weekly-notes@latest
        with:
          template-path: '.docs/RELEASE.md'
          package-path: 'app/package.json'
@@ -53,7 +53,7 @@ jobs:
     steps:
      - if: contains(github.event.issue.labels.*.name, 'weekly')
        name: Create new Issue
-       uses: bpmn-io/bpmn-io-actions/weekly-notes@latest
+       uses: bpmn-io/actions/weekly-notes@latest
        with:
          template-path: '.docs/WEEKLY_TEMPLATE.md'
 ```
