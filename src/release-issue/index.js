@@ -15,17 +15,10 @@ async function run() {
   };
 
   const issue = github.context.payload.issue;
-  core.debug(`issue: ${JSON.stringify(issue, null, 2)}`);
-
-  const payload = JSON.stringify(github.context.payload, undefined, 2);
-  console.log(`The event payload: ${payload}`);
-
 
   const repository = github.context.payload.repository;
-  core.debug(`repository: ${repository}`);
 
   const token = core.getInput('token');
-  core.debug(`token: ${token}`);
 
   const octokitRest = github.getOctokit(token).rest;
 
@@ -109,7 +102,6 @@ async function run() {
 
   // set title to upcoming release
   const title = await _getIssueTitle();
-  core.debug(`title: ${repository}`);
 
   // don't create release issue twice
   const {
@@ -127,12 +119,8 @@ async function run() {
     login: nextReleaseCommander,
   } = getNextRoundRobin(issue, 1) || {};
 
-  core.debug(`nextReleaseCommander: ${nextReleaseCommander}`);
-
   // create weekly note body
   const body = await _getTemplate();
-
-  core.debug(`body: ${body}`);
 
   // create new issue
   const {
@@ -143,8 +131,6 @@ async function run() {
     labels: [ 'release', 'ready' ],
     assignees: [ nextReleaseCommander ]
   });
-
-  core.debug(`createdIssue: ${createdIssue}`);
 
 
   // add comment to closed issue for next moderator
