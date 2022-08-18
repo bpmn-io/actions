@@ -1,0 +1,33 @@
+{
+  "name": "bpmn-io-actions",
+  "version": "0.0.0",
+  "description": "The custom github actions used by the bpmn-io team",
+  "scripts": {
+    "build": "run-s build:release-issue build:weekly-notes",
+    "build:release-issue": "ncc build src/release-issue/index.js -o dist/release-issue/ && copyfiles -f src/release-issue/action.yml dist/release-issue",
+    "build:weekly-notes": "ncc build src/weekly-notes/index.js -o dist/weekly-notes/ && copyfiles -f src/weekly-notes/action.yml dist/weekly-notes",
+    "test": "eslint ."
+  },
+  "keywords": [
+    "gh-actions"
+  ],
+  "author": {
+    "name": "Martin Stamm",
+    "url": "https://github.com/marstamm"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "@actions/core": "^1.9.1",
+    "@actions/github": "^5.0.3",
+    "min-dash": "^3.8.1",
+    "nodemailer": "^6.7.8",
+    "semver": "^7.3.7"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.34.0",
+    "copyfiles": "^2.4.1",
+    "eslint": "^8.22.0",
+    "eslint-plugin-bpmn-io": "^0.14.1",
+    "npm-run-all": "^4.1.5"
+  }
+}
