@@ -10,7 +10,7 @@ const semver = require('semver');
 async function run() {
 
   const RELEASE_TEMPLATE_CONFIG = {
-    templatePath: core.getInput('release-template-path'),
+    templatePath: core.getInput('template-path'),
     packagePath: core.getInput('package-path')
   };
 
