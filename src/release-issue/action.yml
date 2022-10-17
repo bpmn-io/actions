@@ -12,6 +12,8 @@ inputs:
     description: 'Relative path to the package.json'
     required: true
     default: 'package.json'
+  moderators-path:
+    description: 'Relative path to the list of moderators'
 runs:
   using: 'node16'
   main: 'index.js'

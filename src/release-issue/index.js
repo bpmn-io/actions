@@ -3,11 +3,13 @@ const github = require('@actions/github');
 
 const find = require('min-dash').find;
 
-const MODERATORS = require('../shared/moderators');
 const semver = require('semver');
 
+let MODERATORS;
 
 async function run() {
+
+  MODERATORS = await require('../shared/moderators');
 
   const RELEASE_TEMPLATE_CONFIG = {
     templatePath: core.getInput('template-path'),

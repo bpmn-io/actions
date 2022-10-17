@@ -11,6 +11,7 @@ Automatically create the issue for the next release.
 Parameters:
   - `template-path`: Path to the template file. Default: `.github/ISSUE_TEMPLATE/RELEASE.md`
   - `package-path`: Path to the package.json (used for next version number). Default: `package.json`
+  - `moderators-path`: Optional path to the moderators file. Defaults to the bpmn-io moderators.
 
 ### Usage
 
@@ -38,6 +39,7 @@ jobs:
 Automatically create the issue for the next modeling weekly.
 Parameters:
   - `template-path`: Path to the template file. Default: `.github/ISSUE_TEMPLATE/WEEKLY_NOTE.md`
+  - `moderators-path`: Optional path to the moderators file. Defaults to the bpmn-io moderators.
 
 ### Usage
 
