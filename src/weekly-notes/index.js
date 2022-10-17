@@ -9,9 +9,11 @@ const {
   getWeek
 } = require('./util');
 
-const MODERATORS = require('../shared/moderators');
+let MODERATORS;
 
 async function run() {
+
+  MODERATORS = await require('../shared/moderators');
 
   const WEEKLY_TEMPLATE_LOCATION = {
     path: core.getInput('template-path')
