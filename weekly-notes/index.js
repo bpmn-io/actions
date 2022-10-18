@@ -23156,7 +23156,7 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 6155:
+/***/ 6657:
 /***/ ((module) => {
 
 module.exports = [
@@ -23166,6 +23166,39 @@ module.exports = [
   { idx: 3, fullName: 'Martin Stamm', login: 'marstamm' },
   { idx: 4, fullName: 'Beatriz Mendes', login: 'smbea' }
 ];
+
+/***/ }),
+
+/***/ 6155:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const DEFAULT_MODERATORS = __nccwpck_require__(6657);
+
+const core = __nccwpck_require__(2186);
+const github = __nccwpck_require__(5438);
+
+const token = core.getInput('token');
+const moderatorsPath = core.getInput('moderators-path');
+
+const octokitRest = github.getOctokit(token).rest;
+const repository = github.context.payload.repository;
+
+const moderators = moderatorsPath && getModerators();
+
+module.exports = moderators || DEFAULT_MODERATORS;
+
+
+// helpers //////////////////////
+async function getModerators() {
+  const response = await octokitRest.repos.getContent({
+    repo: repository.name,
+    owner: repository.owner.login,
+    path: moderatorsPath
+  });
+
+  const encoded = Buffer.from(response.data.content, 'base64');
+  return JSON.parse(encoded.toString('utf-8'));
+}
 
 
 /***/ }),
@@ -23468,9 +23501,11 @@ const {
   getWeek
 } = __nccwpck_require__(5775);
 
-const MODERATORS = __nccwpck_require__(6155);
+let MODERATORS;
 
 async function run() {
+
+  MODERATORS = await __nccwpck_require__(6155);
 
   const WEEKLY_TEMPLATE_LOCATION = {
     path: core.getInput('template-path')
