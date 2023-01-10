@@ -40,6 +40,7 @@ Automatically create the issue for the next modeling weekly.
 Parameters:
   - `template-path`: Path to the template file. Default: `.github/ISSUE_TEMPLATE/WEEKLY_NOTE.md`
   - `moderators-path`: Optional path to the moderators file. Defaults to the bpmn-io moderators.
+  - `community-worker`: Optional community worker flag. Set to 'false' to not assign a community worker, will default to true.
 
 ### Usage
 
