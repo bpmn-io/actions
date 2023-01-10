@@ -23517,6 +23517,8 @@ async function run() {
 
   const token = core.getInput('token');
 
+  const includeCommunityWorker = core.getInput('community-worker') == 'false' ? false : true;
+
   const octokitRest = github.getOctokit(token).rest;
   const _getIssues = async (options) => {
     options = {
@@ -23578,23 +23580,30 @@ async function run() {
     fullName: nextWriterName
   } = getNextSummaryWriter(issue) || {};
 
-  // assign next community worker
-  const {
-    login: nextCommunityWorker,
-    fullName: nextCommunityWorkerName
-  } = getNextRoundRobin(issue, 2) || {};
+  // assign next community worker if community worker shall be assigned
+  let nextCommunityWorker, nextCommunityWorkerName = null;
+
+  if (includeCommunityWorker) {
+    ({
+      login: nextCommunityWorker,
+      fullName: nextCommunityWorkerName
+    } = getNextRoundRobin(issue, 2) || {});
+  }
 
   // create weekly note body
   const body = await createWeeklyNote(nextModerator, nextSummaryWriter, nextCommunityWorker);
 
   // create new issue
+  // filter out not-set roles
+  const assignees = [ nextModerator, nextCommunityWorker ].filter(a => a);
+
   const {
     data: createdIssue
   } = await _createIssue({
     body,
     title,
     labels: [ 'weekly', 'ready' ],
-    assignees: [ nextModerator, nextCommunityWorker ]
+    assignees
   });
 
   // add comment to closed issue for next moderator
@@ -23602,7 +23611,7 @@ async function run() {
     issue_number: issue.number,
     body: `Created [follow up weekly notes](${createdIssue.html_url}).
 
-Assigned @${nextCommunityWorker} as the community worker and @${nextModerator} as the next moderator.`
+Assigned${nextCommunityWorker ? ' @' + nextCommunityWorker + ' as the community worker and' : ''} @${nextModerator} as the next moderator.`
   });
 
   // send notification
@@ -23614,7 +23623,7 @@ The agenda for ${title} is up: ${createdIssue.html_url}. Feel free to add additi
 
 The moderator for this time will be ${nextModName}.
 The summary writer for this time will be ${nextWriterName}.
-The community worker until then will be ${nextCommunityWorkerName}.
+${nextCommunityWorker ? 'The community worker until then will be ' + nextCommunityWorkerName + '.' : ''}
 
 Best,
 your bot.`
@@ -23635,7 +23644,7 @@ your bot.`
     // substitute roles
     weeklyNote = weeklyNote.replace(/{{moderator}}/g, `@${nextMod}`);
     weeklyNote = weeklyNote.replace(/{{summary-writer}}/g, `@${nextWriter}`);
-    weeklyNote = weeklyNote.replace(/{{community-worker}}/g, `@${nextCommunityWorker}`);
+    weeklyNote = nextCommunityWorker ? weeklyNote.replace(/{{community-worker}}/g, `@${nextCommunityWorker}`) : weeklyNote;
 
     weeklyNote = withoutPrelude(weeklyNote);
 
