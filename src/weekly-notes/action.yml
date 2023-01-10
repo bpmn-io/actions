@@ -2,7 +2,7 @@ name: 'Open weekly issue'
 description: 'Create new release issue when the last one was closed'
 inputs:
   token:
-    description: 'GITHUB_TOKEN or a repo scoped PAT.'
+    description: 'GITHUB_TOKEN or a repo scoped PAT'
     default: ${{ github.token }}
   template-path:
     description: 'Relative path to the weekly template'
@@ -10,6 +10,8 @@ inputs:
     default: '.github/ISSUE_TEMPLATE/WEEKLY_NOTE.md'
   moderators-path:
     description: 'Relative path to the list of moderators'
+  community-worker:
+    description: 'Community worker = true|false. Set to false to not assign a community worker, will default to true'
 runs:
   using: 'node16'
   main: 'index.js'
