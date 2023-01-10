@@ -11,7 +11,7 @@ inputs:
   moderators-path:
     description: 'Relative path to the list of moderators'
   community-worker:
-    description: 'Community worker = true|false. Set to 'false' to not assign a community worker, will default to true'
+    description: 'Community worker = true|false. Set to "false" to not assign a community worker, will default to true'
 runs:
   using: 'node16'
   main: 'index.js'
