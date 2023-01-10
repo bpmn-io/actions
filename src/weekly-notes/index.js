@@ -25,7 +25,7 @@ async function run() {
 
   const token = core.getInput('token');
 
-  const includeCommunityWorker = core.getInput('community-worker') == 'false' ? false : true;
+  const includeCommunityWorker = core.getInput('community-worker') === 'true';
 
   const octokitRest = github.getOctokit(token).rest;
   const _getIssues = async (options) => {
