@@ -21,7 +21,7 @@
     "@actions/github": "^5.0.3",
     "min-dash": "^3.8.1",
     "nodemailer": "^6.7.8",
-    "semver": "^7.3.7"
+    "semver": "^7.5.2"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.34.0",
