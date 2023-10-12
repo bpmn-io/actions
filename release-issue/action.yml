@@ -14,6 +14,9 @@ inputs:
     default: 'package.json'
   moderators-path:
     description: 'Relative path to the list of moderators'
+outputs:
+  assignee:
+    description: 'The assignee of the newly created issue'
 runs:
   using: 'node16'
   main: 'index.js'
