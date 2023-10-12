@@ -134,6 +134,7 @@ async function run() {
     assignees: [ nextReleaseCommander ]
   });
 
+  core.setOutput('assignee', nextReleaseCommander);
 
   // add comment to closed issue for next moderator
   await _createIssueComment({
