@@ -27,6 +27,8 @@ async function run() {
 
   const includeCommunityWorker = core.getInput('community-worker') === 'true';
 
+  const includeMedic = core.getInput('medic') === 'true';
+
   const octokitRest = github.getOctokit(token).rest;
   const _getIssues = async (options) => {
     options = {
@@ -89,7 +91,7 @@ async function run() {
   } = getNextSummaryWriter(issue) || {};
 
   // assign next community worker if community worker shall be assigned
-  let nextCommunityWorker, nextCommunityWorkerName = null;
+  let nextCommunityWorker, nextCommunityWorkerName, nextMedic, nextMedicName = null;
 
   if (includeCommunityWorker) {
     ({
@@ -98,8 +100,15 @@ async function run() {
     } = getNextRoundRobin(issue, 2) || {});
   }
 
+  if (includeMedic) {
+    ({
+      login: nextMedic,
+      fullName: nextMedicName
+    } = getNextRoundRobin(issue, 1, true) || {});
+  }
+
   // create weekly note body
-  const body = await createWeeklyNote(nextModerator, nextSummaryWriter, nextCommunityWorker);
+  const body = await createWeeklyNote(nextModerator, nextSummaryWriter, nextCommunityWorker, nextMedic);
 
   // create new issue
   // filter out not-set roles
@@ -119,7 +128,7 @@ async function run() {
     issue_number: issue.number,
     body: `Created [follow up weekly notes](${createdIssue.html_url}).
 
-Assigned${nextCommunityWorker ? ' @' + nextCommunityWorker + ' as the community worker and' : ''} @${nextModerator} as the next moderator.`
+Assigned${nextCommunityWorker ? ' @' + nextCommunityWorker + ' as the community worker and' : ''} @${nextModerator} as the next moderator${nextMedic ? ' and @' + nextMedic + ' as the medic' : ''}.`
   });
 
   // send notification
@@ -132,12 +141,13 @@ The agenda for ${title} is up: ${createdIssue.html_url}. Feel free to add additi
 The moderator for this time will be ${nextModName}.
 The summary writer for this time will be ${nextWriterName}.
 ${nextCommunityWorker ? 'The community worker until then will be ' + nextCommunityWorkerName + '.' : ''}
+${nextMedic ? 'The medic until then will be ' + nextMedicName + '.' : ''}
 
 Best,
 your bot.`
   });
 
-  async function createWeeklyNote(nextMod, nextWriter, nextCommunityWorker) {
+  async function createWeeklyNote(nextMod, nextWriter, nextCommunityWorker, nextMedic) {
 
     const response = await octokitRest.repos.getContent({
       repo: repository.name,
@@ -153,7 +163,7 @@ your bot.`
     weeklyNote = weeklyNote.replace(/{{moderator}}/g, `@${nextMod}`);
     weeklyNote = weeklyNote.replace(/{{summary-writer}}/g, `@${nextWriter}`);
     weeklyNote = nextCommunityWorker ? weeklyNote.replace(/{{community-worker}}/g, `@${nextCommunityWorker}`) : weeklyNote;
-
+    weeklyNote = nextMedic ? weeklyNote.replace(/{{medic}}/g, `@${nextCommunityWorker}`) : weeklyNote;
     weeklyNote = withoutPrelude(weeklyNote);
 
     return weeklyNote;
@@ -190,7 +200,7 @@ function getIssueTitle() {
   return `W${upcomingWeekNr} - ${upcomingYearNr}`;
 }
 
-function getNextRoundRobin(closedIssue, offset = 1) {
+function getNextRoundRobin(closedIssue, offset = 1, medic = false) {
   function transformIntoBounds(idx, length) {
     return idx >= length ? transformIntoBounds(idx - length, length) : idx;
   }
@@ -209,8 +219,12 @@ function getNextRoundRobin(closedIssue, offset = 1) {
   if (!lastAssignee) {
     return;
   }
-
-  return MODERATORS[transformIntoBounds(lastAssignee.idx + offset, MODERATORS.length)];
+  if (medic) {
+    const medics = JSON.parse(MODERATORS).filter(({medic}) => medic === true);
+    return medics[transformIntoBounds(lastAssignee.idx + offset, medics.length)];
+  } else {
+    return MODERATORS[transformIntoBounds(lastAssignee.idx + offset, MODERATORS.length)];
+  }
 }
 
 
