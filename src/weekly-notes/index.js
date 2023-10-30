@@ -27,6 +27,11 @@ async function run() {
 
   const includeCommunityWorker = core.getInput('community-worker') === 'true';
 
+  const roles = core.getInput('roles')
+    .split(',')
+    .map(r => r.trim())
+    .filter(r => includeCommunityWorker || r !== 'community-worker'); // for backwards compatibility
+
   const octokitRest = github.getOctokit(token).rest;
   const _getIssues = async (options) => {
     options = {
@@ -76,34 +81,19 @@ async function run() {
     return;
   }
 
-  // assign next moderator
-  const {
-    login: nextModerator,
-    fullName: nextModName
-  } = getNextRoundRobin(issue, 1) || {};
+  const assignedRoles = roles.map((role, index) => {
+    return {
+      role,
+      ...getNextRoundRobin(issue, index + 1)
+    };
+  });
 
-  // assign next summary writer
-  const {
-    login: nextSummaryWriter,
-    fullName: nextWriterName
-  } = getNextSummaryWriter(issue) || {};
-
-  // assign next community worker if community worker shall be assigned
-  let nextCommunityWorker, nextCommunityWorkerName = null;
-
-  if (includeCommunityWorker) {
-    ({
-      login: nextCommunityWorker,
-      fullName: nextCommunityWorkerName
-    } = getNextRoundRobin(issue, 2) || {});
-  }
 
   // create weekly note body
-  const body = await createWeeklyNote(nextModerator, nextSummaryWriter, nextCommunityWorker);
+  const body = await createWeeklyNote(assignedRoles);
 
   // create new issue
-  // filter out not-set roles
-  const assignees = [ nextModerator, nextCommunityWorker ].filter(a => a);
+  const assignees = assignedRoles.map(({ login }) => login);
 
   const {
     data: createdIssue
@@ -114,12 +104,16 @@ async function run() {
     assignees
   });
 
+  const nextRoleMessage = assignedRoles.map(({ role, login }) => {
+    return `@${login} as next ${role.replaceAll('-', ' ')}`;
+  }).join(', ');
+
   // add comment to closed issue for next moderator
   await _createIssueComment({
     issue_number: issue.number,
     body: `Created [follow up weekly notes](${createdIssue.html_url}).
 
-Assigned${nextCommunityWorker ? ' @' + nextCommunityWorker + ' as the community worker and' : ''} @${nextModerator} as the next moderator.`
+Assigned ${nextRoleMessage}.`
   });
 
   // send notification
@@ -129,15 +123,11 @@ Assigned${nextCommunityWorker ? ' @' + nextCommunityWorker + ' as the community 
 
 The agenda for ${title} is up: ${createdIssue.html_url}. Feel free to add additional topics.
 
-The moderator for this time will be ${nextModName}.
-The summary writer for this time will be ${nextWriterName}.
-${nextCommunityWorker ? 'The community worker until then will be ' + nextCommunityWorkerName + '.' : ''}
-
 Best,
 your bot.`
   });
 
-  async function createWeeklyNote(nextMod, nextWriter, nextCommunityWorker) {
+  async function createWeeklyNote(replaceOptions) {
 
     const response = await octokitRest.repos.getContent({
       repo: repository.name,
@@ -150,9 +140,9 @@ your bot.`
     let weeklyNote = encoded.toString('utf-8');
 
     // substitute roles
-    weeklyNote = weeklyNote.replace(/{{moderator}}/g, `@${nextMod}`);
-    weeklyNote = weeklyNote.replace(/{{summary-writer}}/g, `@${nextWriter}`);
-    weeklyNote = nextCommunityWorker ? weeklyNote.replace(/{{community-worker}}/g, `@${nextCommunityWorker}`) : weeklyNote;
+    replaceOptions.forEach(({ login, role }) => {
+      weeklyNote = weeklyNote.replaceAll(`{{${role}}}`, `@${login}`);
+    });
 
     weeklyNote = withoutPrelude(weeklyNote);
 
@@ -213,20 +203,6 @@ function getNextRoundRobin(closedIssue, offset = 1) {
   return MODERATORS[transformIntoBounds(lastAssignee.idx + offset, MODERATORS.length)];
 }
 
-
-function getNextSummaryWriter(closedIssue) {
-  const {
-    assignee
-  } = closedIssue;
-
-  if (!assignee) {
-    return;
-  }
-
-  const lastModerator = find(MODERATORS, m => m.login === assignee.login);
-
-  return lastModerator;
-}
 
 /**
  * @param {string} weeklyTemplate
