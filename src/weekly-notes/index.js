@@ -3,8 +3,6 @@ const github = require('@actions/github');
 
 const find = require('min-dash').find;
 
-const mailer = require('./mailer');
-
 const {
   getWeek
 } = require('./util');
@@ -114,17 +112,6 @@ async function run() {
     body: `Created [follow up weekly notes](${createdIssue.html_url}).
 
 Assigned ${nextRoleMessage}.`
-  });
-
-  // send notification
-  process.env.EMAIL_TO && mailer({
-    subject: `${title} - Agenda Is Up`,
-    text: `Hi team,
-
-The agenda for ${title} is up: ${createdIssue.html_url}. Feel free to add additional topics.
-
-Best,
-your bot.`
   });
 
   async function createWeeklyNote(replaceOptions) {
