@@ -15,6 +15,12 @@ inputs:
     required: false
     default: true
     type: boolean
+    deprecationMessage: 'This option is deprecated. Define your required roles through `roles`'
+  roles:
+    description: 'Comma separated list of roles. Roles will be assigned round-robin from the list of moderators.'
+    required: false
+    default: 'moderator,summary-writer,community-worker'
+    type: string
 runs:
   using: 'node16'
   main: 'index.js'
