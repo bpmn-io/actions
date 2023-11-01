@@ -88,7 +88,7 @@ async function run() {
 
 
   // create weekly note body
-  const body = await createWeeklyNote(assignedRoles);
+  const body = await createWeeklyNote(issue.url, assignedRoles);
 
   // create new issue
   const assignees = assignedRoles.map(({ login }) => login);
@@ -114,7 +114,7 @@ async function run() {
 Assigned ${nextRoleMessage}.`
   });
 
-  async function createWeeklyNote(replaceOptions) {
+  async function createWeeklyNote(previousIssueURL, roles) {
 
     const response = await octokitRest.repos.getContent({
       repo: repository.name,
@@ -127,10 +127,11 @@ Assigned ${nextRoleMessage}.`
     let weeklyNote = encoded.toString('utf-8');
 
     // substitute roles
-    replaceOptions.forEach(({ login, role }) => {
+    roles.forEach(({ login, role }) => {
       weeklyNote = weeklyNote.replaceAll(`{{${role}}}`, `@${login}`);
     });
 
+    weeklyNote = weeklyNote.replaceAll(`{{previousIssueURL}}`, `${previousIssueURL}`);
     weeklyNote = withoutPrelude(weeklyNote);
 
     return weeklyNote;
