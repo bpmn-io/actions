@@ -12,6 +12,7 @@ Parameters:
   - `template-path`: Path to the template file. Default: `.github/ISSUE_TEMPLATE/RELEASE.md`
   - `package-path`: Path to the package.json (used for next version number). Default: `package.json`
   - `moderators-path`: Optional path to the moderators file. Defaults to the bpmn-io moderators.
+  - `labels`: A comma-separated list of the labels you want to assign in the release issue.
 
 ### Usage
 
@@ -30,7 +31,8 @@ jobs:
        uses: bpmn-io/actions/release-issue@latest
        with:
          template-path: '.docs/RELEASE.md'
-         package-path: 'app/package.json'
+         package-path: 'app/package.json',
+         labels: 'release,ready'
 ```
 
 
