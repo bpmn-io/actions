@@ -13740,6 +13740,8 @@ async function run() {
 
   const token = core.getInput('token');
 
+  const labels = core.getInput('labels');
+
   const octokitRest = github.getOctokit(token).rest;
 
   const _getNextMinor = async function() {
@@ -13848,7 +13850,7 @@ async function run() {
   } = await _createIssue({
     body,
     title,
-    labels: [ 'release', 'ready' ],
+    labels: labels.split(',').map(l => l.trim()),
     assignees: [ nextReleaseCommander ]
   });
 
