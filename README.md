@@ -31,7 +31,7 @@ jobs:
        uses: bpmn-io/actions/release-issue@latest
        with:
          template-path: '.docs/RELEASE.md'
-         package-path: 'app/package.json',
+         package-path: 'app/package.json'
          labels: 'release,ready'
 ```
 
