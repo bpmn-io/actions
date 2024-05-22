@@ -30,6 +30,8 @@ async function run() {
     .map(r => r.trim())
     .filter(r => includeCommunityWorker || r !== 'community-worker'); // for backwards compatibility
 
+  const weekInterval = core.getInput('week-internval')
+
   const octokitRest = github.getOctokit(token).rest;
   const _getIssues = async (options) => {
     options = {
@@ -162,7 +164,7 @@ function getIssueTitle() {
   const currentWeek = getCurrentWeek(),
         currentWeekNr = currentWeek.weekNumber,
         currentYearNr = currentWeek.year,
-        upcomingWeekNr = currentWeekNr == 52 ? 1 : currentWeekNr + 1,
+        upcomingWeekNr = currentWeekNr == 52 ? 1 : currentWeekNr + weekInterval,
         upcomingYearNr = upcomingWeekNr == 1 ? currentYearNr + 1 : currentYearNr;
 
   return `W${upcomingWeekNr} - ${upcomingYearNr}`;
