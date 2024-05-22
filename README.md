@@ -43,6 +43,7 @@ Parameters:
   - `template-path`: Path to the template file. Default: `.github/ISSUE_TEMPLATE/WEEKLY_NOTE.md`
   - `moderators-path`: Optional path to the moderators file. Defaults to the bpmn-io moderators.
   - `roles`: A comma-separated list of the roles you want to assign in the weekly.
+  - `week-interval`: The jump of the weeks used in the GitHub issue title. This is useful if you want to open the issue every 2 weeks or so.
 
 
 ### Usage
