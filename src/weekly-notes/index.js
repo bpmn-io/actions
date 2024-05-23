@@ -30,7 +30,7 @@ async function run() {
     .map(r => r.trim())
     .filter(r => includeCommunityWorker || r !== 'community-worker'); // for backwards compatibility
 
-  const weekInterval = core.getInput('week-internval')
+  const weekInterval = core.getInput('week-interval');
 
   const octokitRest = github.getOctokit(token).rest;
   const _getIssues = async (options) => {
