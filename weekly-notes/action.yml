@@ -21,6 +21,11 @@ inputs:
     required: false
     default: 'moderator,summary-writer,community-worker'
     type: string
+  week-interval:
+    description: 'The jump of the weeks used in the GitHub issue title. This is useful if you want to open the issue every 2 weeks or so.'
+    required: false
+    default: 1
+    type: number
 runs:
   using: 'node16'
   main: 'index.js'
