@@ -131,7 +131,7 @@ Assigned ${nextRoleMessage}.`
       weeklyNote = weeklyNote.replaceAll(`{{${role}}}`, `@${login}`);
     });
 
-    weeklyNote = weeklyNote.replaceAll(`{{previousIssueURL}}`, `${previousIssueURL}`);
+    weeklyNote = weeklyNote.replaceAll('{{previousIssueURL}}', `${previousIssueURL}`);
     weeklyNote = withoutPrelude(weeklyNote);
 
     return weeklyNote;
