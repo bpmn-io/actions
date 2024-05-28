@@ -1,7 +1,7 @@
 
 /**
  * @typedef {Object} CalendarWeek
- * @property {number} weekNumber
+ * @property {number} weekNumber ISO week number 1-53
  * @property {number} year
  */
 
