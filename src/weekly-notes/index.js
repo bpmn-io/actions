@@ -159,10 +159,11 @@ function getCurrentWeek() {
 }
 
 function getIssueTitle() {
-  const currentWeek = getCurrentWeek(),
+  const weekInterval = core.getInput('week-interval'),
+        currentWeek = getCurrentWeek(),
         currentWeekNr = currentWeek.weekNumber,
         currentYearNr = currentWeek.year,
-        upcomingWeekNr = (currentWeekNr + core.getInput('week-interval')) % 52,
+        upcomingWeekNr = (currentWeekNr + weekInterval - 1) % 52 + 1,
         upcomingYearNr = upcomingWeekNr == 1 ? currentYearNr + 1 : currentYearNr;
 
   return `W${upcomingWeekNr} - ${upcomingYearNr}`;
