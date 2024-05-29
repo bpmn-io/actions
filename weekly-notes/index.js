@@ -9540,7 +9540,7 @@ async function getModerators() {
 
 /**
  * @typedef {Object} CalendarWeek
- * @property {number} weekNumber
+ * @property {number} weekNumber ISO week number 1-53
  * @property {number} year
  */
 
@@ -9571,6 +9571,28 @@ module.exports.getWeek = function(date) {
     weekNumber,
     year
   };
+};
+
+/**
+ * @param {number} weekInterval
+ * @param { {
+ *   weekNumber: number,
+ *   year: number
+ * } } currentWeek
+ *
+ * @return {string}
+ */
+module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, currentWeek) {
+
+  const {
+    weekNumber: currentWeekNr,
+    year: currentYearNr
+  } = currentWeek;
+
+  const upcomingWeekNr = (Math.min(currentWeekNr, 52) + weekInterval - 1) % 52 + 1;
+  const upcomingYearNr = upcomingWeekNr < currentWeekNr ? currentYearNr + 1 : currentYearNr;
+
+  return `W${upcomingWeekNr} - ${upcomingYearNr}`;
 };
 
 /***/ }),
@@ -10677,7 +10699,8 @@ const github = __nccwpck_require__(5438);
 const find = (__nccwpck_require__(3025)/* .find */ .sE);
 
 const {
-  getWeek
+  getWeek,
+  getNextIssueTitle
 } = __nccwpck_require__(5775);
 
 let MODERATORS;
@@ -10702,8 +10725,6 @@ async function run() {
     .split(',')
     .map(r => r.trim())
     .filter(r => includeCommunityWorker || r !== 'community-worker'); // for backwards compatibility
-
-  const weekInterval = core.getInput('week-interval');
 
   const octokitRest = github.getOctokit(token).rest;
   const _getIssues = async (options) => {
@@ -10743,7 +10764,10 @@ async function run() {
   }
 
   // set title to upcoming calendar week + year
-  const title = getIssueTitle();
+  const title = getNextIssueTitle(
+    core.getInput('week-interval'),
+    getCurrentWeek()
+  );
 
   // don't create weekly twice
   const {
@@ -10831,16 +10855,6 @@ function alreadyCreated(weeklyTitle, issues) {
 
 function getCurrentWeek() {
   return getWeek(new Date());
-}
-
-function getIssueTitle() {
-  const currentWeek = getCurrentWeek(),
-        currentWeekNr = currentWeek.weekNumber,
-        currentYearNr = currentWeek.year,
-        upcomingWeekNr = currentWeekNr == 52 ? 1 : currentWeekNr + weekInterval,
-        upcomingYearNr = upcomingWeekNr == 1 ? currentYearNr + 1 : currentYearNr;
-
-  return `W${upcomingWeekNr} - ${upcomingYearNr}`;
 }
 
 function getNextRoundRobin(closedIssue, offset = 1) {
