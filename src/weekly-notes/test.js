@@ -4,6 +4,13 @@ const {
 
 const assert = require('node:assert');
 
+assert.deepEqual(
+  getNextIssueTitle(1, { weekNumber: 1, year: 2000 }), 'W2 - 2000'
+);
+
+assert.deepEqual(
+  getNextIssueTitle(2, { weekNumber: 1, year: 2000 }), 'W3 - 2000'
+);
 
 assert.deepEqual(
   getNextIssueTitle(1, { weekNumber: 5, year: 2000 }), 'W6 - 2000'
