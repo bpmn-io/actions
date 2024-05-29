@@ -9584,6 +9584,11 @@ module.exports.getWeek = function(date) {
  */
 module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, currentWeek) {
 
+  console.debug('[weekly-notes] computing next issue title', {
+    currentWeek,
+    weekInterval
+  });
+
   const {
     weekNumber: currentWeekNr,
     year: currentYearNr
@@ -10763,10 +10768,13 @@ async function run() {
     return;
   }
 
+  const currentWeek = getCurrentWeek();
+  const weekInterval = core.getInput('week-interval');
+
   // set title to upcoming calendar week + year
   const title = getNextIssueTitle(
-    core.getInput('week-interval'),
-    getCurrentWeek()
+    weekInterval,
+    currentWeek
   );
 
   // don't create weekly twice
