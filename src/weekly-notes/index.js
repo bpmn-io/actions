@@ -4,7 +4,8 @@ const github = require('@actions/github');
 const find = require('min-dash').find;
 
 const {
-  getWeek
+  getWeek,
+  getNextIssueTitle
 } = require('./util');
 
 let MODERATORS;
@@ -68,7 +69,10 @@ async function run() {
   }
 
   // set title to upcoming calendar week + year
-  const title = getIssueTitle();
+  const title = getNextIssueTitle(
+    core.getInput('week-interval'),
+    getCurrentWeek()
+  );
 
   // don't create weekly twice
   const {
@@ -156,20 +160,6 @@ function alreadyCreated(weeklyTitle, issues) {
 
 function getCurrentWeek() {
   return getWeek(new Date());
-}
-
-function getIssueTitle() {
-  const weekInterval = core.getInput('week-interval');
-
-  const {
-    weekNumber: currentWeekNr,
-    year: currentYearNr
-  } = getCurrentWeek();
-
-  const upcomingWeekNr = (Math.min(currentWeekNr, 52) + weekInterval - 1) % 52 + 1;
-  const upcomingYearNr = upcomingWeekNr < currentWeekNr ? currentYearNr + 1 : currentYearNr;
-
-  return `W${upcomingWeekNr} - ${upcomingYearNr}`;
 }
 
 function getNextRoundRobin(closedIssue, offset = 1) {

@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "description": "The custom github actions used by the bpmn-io team",
   "scripts": {
-    "all": "run-s test build",
+    "all": "run-s lint test build",
+    "lint": "eslint .",
     "build": "run-s build:release-issue build:weekly-notes",
     "build:release-issue": "ncc build src/release-issue/index.js -o dist/release-issue/ && copyfiles -f src/release-issue/action.yml dist/release-issue",
     "build:weekly-notes": "ncc build src/weekly-notes/index.js -o dist/weekly-notes/ && copyfiles -f src/weekly-notes/action.yml dist/weekly-notes",
-    "test": "eslint ."
+    "test": "node src/weekly-notes/test.js"
   },
   "keywords": [
     "gh-actions"

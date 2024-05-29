@@ -33,3 +33,25 @@ module.exports.getWeek = function(date) {
     year
   };
 };
+
+/**
+ * @param {number} weekInterval
+ * @param { {
+ *   weekNumber: number,
+ *   year: number
+ * } } currentWeek
+ *
+ * @return {string}
+ */
+module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, currentWeek) {
+
+  const {
+    weekNumber: currentWeekNr,
+    year: currentYearNr
+  } = currentWeek;
+
+  const upcomingWeekNr = (Math.min(currentWeekNr, 52) + weekInterval - 1) % 52 + 1;
+  const upcomingYearNr = upcomingWeekNr < currentWeekNr ? currentYearNr + 1 : currentYearNr;
+
+  return `W${upcomingWeekNr} - ${upcomingYearNr}`;
+};
