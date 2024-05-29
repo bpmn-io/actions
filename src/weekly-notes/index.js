@@ -24,7 +24,7 @@ async function run() {
 
   const token = core.getInput('token');
 
-  const includeCommunityWorker = core.getInput('community-worker') === 'true';
+  const includeCommunityWorker = core.getBooleanInput('community-worker');
 
   const roles = core.getInput('roles')
     .split(',')
