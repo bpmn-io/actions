@@ -45,6 +45,11 @@ module.exports.getWeek = function(date) {
  */
 module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, currentWeek) {
 
+  console.debug('[weekly-notes] computing next issue title', {
+    currentWeek,
+    weekInterval
+  });
+
   const {
     weekNumber: currentWeekNr,
     year: currentYearNr
