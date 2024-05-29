@@ -68,10 +68,13 @@ async function run() {
     return;
   }
 
+  const currentWeek = getCurrentWeek();
+  const weekInterval = core.getInput('week-interval');
+
   // set title to upcoming calendar week + year
   const title = getNextIssueTitle(
-    core.getInput('week-interval'),
-    getCurrentWeek()
+    weekInterval,
+    currentWeek
   );
 
   // don't create weekly twice
