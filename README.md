@@ -1,5 +1,7 @@
 # bpmn-io-actions
 
+[![CI](https://github.com/bpmn-io/actions/actions/workflows/CI.yml/badge.svg)](https://github.com/bpmn-io/actions/actions/workflows/CI.yml)
+
 This repository contains the GitHub Actions used by the bpmn-io team.
 
 The latest version is built and published to the `latest` branch continuously.
