@@ -32138,7 +32138,7 @@ async function run() {
 
   const token = core.getInput('token');
 
-  const includeCommunityWorker = core.getInput('community-worker') === 'true';
+  const includeCommunityWorker = core.getBooleanInput('community-worker');
 
   const roles = core.getInput('roles')
     .split(',')
@@ -32183,7 +32183,7 @@ async function run() {
   }
 
   const currentWeek = getCurrentWeek();
-  const weekInterval = core.getInput('week-interval');
+  const weekInterval = parseInt(core.getInput('week-interval'), 10);
 
   // set title to upcoming calendar week + year
   const title = getNextIssueTitle(
