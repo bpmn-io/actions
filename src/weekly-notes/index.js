@@ -159,12 +159,15 @@ function getCurrentWeek() {
 }
 
 function getIssueTitle() {
-  const weekInterval = core.getInput('week-interval'),
-        currentWeek = getCurrentWeek(),
-        currentWeekNr = currentWeek.weekNumber,
-        currentYearNr = currentWeek.year,
-        upcomingWeekNr = (currentWeekNr + weekInterval - 1) % 52 + 1,
-        upcomingYearNr = upcomingWeekNr == 1 ? currentYearNr + 1 : currentYearNr;
+  const weekInterval = core.getInput('week-interval');
+
+  const {
+    weekNumber: currentWeekNr,
+    year: currentYearNr
+  } = getCurrentWeek();
+
+  const upcomingWeekNr = (Math.min(currentWeekNr, 52) + weekInterval - 1) % 52 + 1;
+  const upcomingYearNr = upcomingWeekNr < currentWeekNr ? currentYearNr + 1 : currentYearNr;
 
   return `W${upcomingWeekNr} - ${upcomingYearNr}`;
 }
