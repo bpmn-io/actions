@@ -29235,6 +29235,39 @@ async function getModerators() {
 
 /***/ }),
 
+/***/ 7677:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const { findIndex } = __nccwpck_require__(3025);
+
+/**
+ * @typedef { { login: string, fullName: string } } Assignee
+ */
+
+/**
+ * @param { Assignee[] } candidates
+ * @param { { login: string } } lastAssignee
+ * @param {number} [offset=1]
+ *
+ * @return {Assignee | null}
+ */
+function getNextAssignee(candidates, lastAssignee, offset = 1) {
+  const lastIndex = findIndex(candidates, c => c.login === lastAssignee.login);
+
+  // ensure assignee was a valid moderator
+  if (lastIndex === -1) {
+    return null;
+  }
+
+  return candidates[(lastIndex + offset) % candidates.length];
+}
+
+module.exports = {
+  getNextAssignee
+};
+
+/***/ }),
+
 /***/ 5775:
 /***/ ((module) => {
 
@@ -31156,7 +31189,6 @@ module.exports = parseParams
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
-var __webpack_unused_export__;
 
 
 /**
@@ -32030,43 +32062,43 @@ function merge(target, ...sources) {
   return target;
 }
 
-__webpack_unused_export__ = assign;
-__webpack_unused_export__ = bind;
-__webpack_unused_export__ = debounce;
-__webpack_unused_export__ = ensureArray;
-__webpack_unused_export__ = every;
-__webpack_unused_export__ = filter;
-exports.sE = find;
-__webpack_unused_export__ = findIndex;
-__webpack_unused_export__ = flatten;
-__webpack_unused_export__ = forEach;
-__webpack_unused_export__ = get;
-__webpack_unused_export__ = groupBy;
-__webpack_unused_export__ = has;
-__webpack_unused_export__ = isArray;
-__webpack_unused_export__ = isDefined;
-__webpack_unused_export__ = isFunction;
-__webpack_unused_export__ = isNil;
-__webpack_unused_export__ = isNumber;
-__webpack_unused_export__ = isObject;
-__webpack_unused_export__ = isString;
-__webpack_unused_export__ = isUndefined;
-__webpack_unused_export__ = keys;
-__webpack_unused_export__ = map;
-__webpack_unused_export__ = matchPattern;
-__webpack_unused_export__ = merge;
-__webpack_unused_export__ = omit;
-__webpack_unused_export__ = pick;
-__webpack_unused_export__ = reduce;
-__webpack_unused_export__ = set;
-__webpack_unused_export__ = size;
-__webpack_unused_export__ = some;
-__webpack_unused_export__ = sortBy;
-__webpack_unused_export__ = throttle;
-__webpack_unused_export__ = unionBy;
-__webpack_unused_export__ = uniqueBy;
-__webpack_unused_export__ = values;
-__webpack_unused_export__ = without;
+exports.assign = assign;
+exports.bind = bind;
+exports.debounce = debounce;
+exports.ensureArray = ensureArray;
+exports.every = every;
+exports.filter = filter;
+exports.find = find;
+exports.findIndex = findIndex;
+exports.flatten = flatten;
+exports.forEach = forEach;
+exports.get = get;
+exports.groupBy = groupBy;
+exports.has = has;
+exports.isArray = isArray;
+exports.isDefined = isDefined;
+exports.isFunction = isFunction;
+exports.isNil = isNil;
+exports.isNumber = isNumber;
+exports.isObject = isObject;
+exports.isString = isString;
+exports.isUndefined = isUndefined;
+exports.keys = keys;
+exports.map = map;
+exports.matchPattern = matchPattern;
+exports.merge = merge;
+exports.omit = omit;
+exports.pick = pick;
+exports.reduce = reduce;
+exports.set = set;
+exports.size = size;
+exports.some = some;
+exports.sortBy = sortBy;
+exports.throttle = throttle;
+exports.unionBy = unionBy;
+exports.uniqueBy = uniqueBy;
+exports.values = values;
+exports.without = without;
 
 
 /***/ })
@@ -32115,18 +32147,19 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
 
-const find = (__nccwpck_require__(3025)/* .find */ .sE);
+const {
+  find
+} = __nccwpck_require__(3025);
 
 const {
   getWeek,
   getNextIssueTitle
 } = __nccwpck_require__(5775);
-
-let MODERATORS;
+const { getNextAssignee } = __nccwpck_require__(7677);
 
 async function run() {
 
-  MODERATORS = await __nccwpck_require__(6155);
+  const MODERATORS = await __nccwpck_require__(6155);
 
   const WEEKLY_TEMPLATE_LOCATION = {
     path: core.getInput('template-path')
@@ -32203,7 +32236,7 @@ async function run() {
   const assignedRoles = roles.map((role, index) => {
     return {
       role,
-      ...getNextRoundRobin(issue, index + 1)
+      ...getNextAssignee(MODERATORS, issue, index + 1)
     };
   });
 
@@ -32278,30 +32311,6 @@ function alreadyCreated(weeklyTitle, issues) {
 function getCurrentWeek() {
   return getWeek(new Date());
 }
-
-function getNextRoundRobin(closedIssue, offset = 1) {
-  function transformIntoBounds(idx, length) {
-    return idx >= length ? transformIntoBounds(idx - length, length) : idx;
-  }
-
-  const {
-    assignee
-  } = closedIssue;
-
-  if (!assignee) {
-    return;
-  }
-
-  const lastAssignee = find(MODERATORS, m => m.login === assignee.login);
-
-  // ensure assignee was a valid moderator
-  if (!lastAssignee) {
-    return;
-  }
-
-  return MODERATORS[transformIntoBounds(lastAssignee.idx + offset, MODERATORS.length)];
-}
-
 
 /**
  * @param {string} weeklyTemplate
