@@ -1,15 +1,16 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-const find = require('min-dash').find;
+const { find } = require('min-dash');
+
+const { getNextAssignee } = require('../shared/util.js');
 
 const semver = require('semver');
 
-let MODERATORS;
 
 async function run() {
 
-  MODERATORS = await require('../shared/moderators');
+  const MODERATORS = await require('../shared/moderators');
 
   const RELEASE_TEMPLATE_CONFIG = {
     templatePath: core.getInput('template-path'),
@@ -121,7 +122,7 @@ async function run() {
   // assign next release commander
   const {
     login: nextReleaseCommander,
-  } = getNextRoundRobin(issue, 1) || {};
+  } = getNextAssignee(MODERATORS, issue.assignee) || {};
 
   // create weekly note body
   const body = await _getTemplate();
@@ -164,28 +165,6 @@ function alreadyCreated(title, issues) {
   return !!find(issues, (i) => i.title === title);
 }
 
-function getNextRoundRobin(closedIssue, offset = 1) {
-  function transformIntoBounds(idx, length) {
-    return idx >= length ? transformIntoBounds(idx - length, length) : idx;
-  }
-
-  const {
-    assignee
-  } = closedIssue;
-
-  if (!assignee) {
-    return;
-  }
-
-  const lastAssignee = find(MODERATORS, m => m.login === assignee.login);
-
-  // ensure assignee was a valid moderator
-  if (!lastAssignee) {
-    return;
-  }
-
-  return MODERATORS[transformIntoBounds(lastAssignee.idx + offset, MODERATORS.length)];
-}
 
 function withoutPrelude(template) {
   const withoutPreludeOpening = template.replace('---', '');

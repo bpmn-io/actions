@@ -1,18 +1,19 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-const find = require('min-dash').find;
+const {
+  find
+} = require('min-dash');
 
 const {
   getWeek,
   getNextIssueTitle
 } = require('./util');
-
-let MODERATORS;
+const { getNextAssignee } = require('../shared/util');
 
 async function run() {
 
-  MODERATORS = await require('../shared/moderators');
+  const MODERATORS = await require('../shared/moderators');
 
   const WEEKLY_TEMPLATE_LOCATION = {
     path: core.getInput('template-path')
@@ -89,7 +90,7 @@ async function run() {
   const assignedRoles = roles.map((role, index) => {
     return {
       role,
-      ...getNextRoundRobin(issue, index + 1)
+      ...getNextAssignee(MODERATORS, issue, index + 1)
     };
   });
 
@@ -164,30 +165,6 @@ function alreadyCreated(weeklyTitle, issues) {
 function getCurrentWeek() {
   return getWeek(new Date());
 }
-
-function getNextRoundRobin(closedIssue, offset = 1) {
-  function transformIntoBounds(idx, length) {
-    return idx >= length ? transformIntoBounds(idx - length, length) : idx;
-  }
-
-  const {
-    assignee
-  } = closedIssue;
-
-  if (!assignee) {
-    return;
-  }
-
-  const lastAssignee = find(MODERATORS, m => m.login === assignee.login);
-
-  // ensure assignee was a valid moderator
-  if (!lastAssignee) {
-    return;
-  }
-
-  return MODERATORS[transformIntoBounds(lastAssignee.idx + offset, MODERATORS.length)];
-}
-
 
 /**
  * @param {string} weeklyTemplate
