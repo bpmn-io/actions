@@ -9,15 +9,14 @@ const {
   getWeek,
   getNextIssueTitle
 } = require('./util');
+
 const { getNextAssignee } = require('../shared/util');
 
 async function run() {
 
   const MODERATORS = await require('../shared/moderators');
 
-  const WEEKLY_TEMPLATE_LOCATION = {
-    path: core.getInput('template-path')
-  };
+  const WEEKLY_TEMPLATE_PATH = core.getInput('template-path');
 
   const issue = github.context.payload.issue;
 
@@ -127,7 +126,7 @@ Assigned ${nextRoleMessage}.`
     const response = await octokitRest.repos.getContent({
       repo: repository.name,
       owner: repository.owner.login,
-      path: WEEKLY_TEMPLATE_LOCATION.path
+      path: WEEKLY_TEMPLATE_PATH
     });
 
     const encoded = Buffer.from(response.data.content, 'base64');
