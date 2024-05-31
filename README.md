@@ -6,15 +6,20 @@ This repository contains the GitHub Actions used by the bpmn-io team.
 
 The latest version is built and published to the `latest` branch continuously.
 
-## release-issue
+## `release-issue`
 
 Automatically create the issue for the next release.
 
-Parameters:
-  - `template-path`: Path to the template file. Default: `.github/ISSUE_TEMPLATE/RELEASE.md`
-  - `package-path`: Path to the package.json (used for next version number). Default: `package.json`
-  - `moderators-path`: Optional path to the moderators file. Defaults to the bpmn-io moderators.
-  - `labels`: A comma-separated list of the labels you want to assign in the release issue.
+### Parameters
+
+- `template-path`: Path to the template file. Default: `.github/ISSUE_TEMPLATE/RELEASE.md`
+- `package-path`: Path to the package.json (used for next version number). Default: `package.json`
+- `moderators-path`: Optional path to the moderators file. Defaults to the bpmn-io moderators.
+- `labels`: A comma-separated list of the labels you want to assign in the release issue.
+
+### Outputs
+
+- `assignee`: Person assigned, if assignment took place
 
 ### Usage
 
@@ -37,16 +42,23 @@ jobs:
          labels: 'release,ready'
 ```
 
-
-## weekly-notes
+## `weekly-notes`
 
 Automatically create the issue for the next modeling weekly.
-Parameters:
-  - `template-path`: Path to the template file. Default: `.github/ISSUE_TEMPLATE/WEEKLY_NOTE.md`
-  - `moderators-path`: Optional path to the moderators file. Defaults to the bpmn-io moderators.
-  - `roles`: A comma-separated list of the roles you want to assign in the weekly.
-  - `week-interval`: The jump of the weeks used in the GitHub issue title. This is useful if you want to open the issue every 2 weeks or so.
 
+### Parameters
+
+- `template-path`: Path to the template file. Default: `.github/ISSUE_TEMPLATE/WEEKLY_NOTE.md`
+- `moderators-path`: Optional path to the moderators file. Defaults to the bpmn-io moderators.
+- `roles`: A comma-separated list of the roles you want to assign in the weekly.
+- `week-interval`: The time (in weeks) between two weeklies. Usefuly for biweekly and other cadences.
+
+### Outputs
+
+- `moderator-assignee`: Moderator assigned, if assignment took place
+- `summary-writer-assignee`: Summary writer assigned, if assignment took place
+- `community-worker-assignee`: Community worker assigned, if assignment took place
+- `html-url`: URL of the newly created weekly note, if one got created
 
 ### Usage
 
