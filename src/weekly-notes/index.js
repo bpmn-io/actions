@@ -148,6 +148,8 @@ Assigned ${nextRoleMessage}.`
   assignedRoles.forEach(({ role, login }) => {
     core.setOutput(`${role}-assignee`, login);
   });
+
+  core.setOutput('html-url', createdIssue.html_url);
 }
 
 run();
