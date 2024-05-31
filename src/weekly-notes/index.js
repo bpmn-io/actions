@@ -101,7 +101,7 @@ async function run() {
   } = await _getIssues({ state: 'all' });
 
   if (alreadyCreated(title, issues)) {
-    return;
+    return core.setFailed(`Issue ${ title } already exists`);
   }
 
   const roles = core.getInput('roles')
@@ -115,7 +115,6 @@ async function run() {
       ...getNextAssignee(MODERATORS, issue.assignee, index + 1)
     };
   });
-
 
   // create weekly note body
   const body = await _createWeeklyNote(issue.url, assignedRoles);
