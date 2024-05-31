@@ -26,11 +26,6 @@ async function run() {
 
   const includeCommunityWorker = core.getBooleanInput('community-worker');
 
-  const roles = core.getInput('roles')
-    .split(',')
-    .map(r => r.trim())
-    .filter(r => includeCommunityWorker || r !== 'community-worker'); // for backwards compatibility
-
   const octokitRest = github.getOctokit(token).rest;
   const _getIssues = async (options) => {
     options = {
@@ -108,6 +103,11 @@ async function run() {
   if (alreadyCreated(title, issues)) {
     return;
   }
+
+  const roles = core.getInput('roles')
+    .split(',')
+    .map(r => r.trim())
+    .filter(r => includeCommunityWorker || r !== 'community-worker'); // for backwards compatibility
 
   const assignedRoles = roles.map((role, index) => {
     return {
