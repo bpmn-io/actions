@@ -32155,15 +32155,14 @@ const {
   getWeek,
   getNextIssueTitle
 } = __nccwpck_require__(5775);
+
 const { getNextAssignee } = __nccwpck_require__(7677);
 
 async function run() {
 
   const MODERATORS = await __nccwpck_require__(6155);
 
-  const WEEKLY_TEMPLATE_LOCATION = {
-    path: core.getInput('template-path')
-  };
+  const WEEKLY_TEMPLATE_PATH = core.getInput('template-path');
 
   const issue = github.context.payload.issue;
 
@@ -32268,12 +32267,17 @@ async function run() {
 Assigned ${nextRoleMessage}.`
   });
 
-  async function createWeeklyNote(previousIssueURL, roles) {
+  // output role assignments
+  assignedRoles.forEach(({ role, login }) => {
+    core.setOutput(`${role}-assignee`, login);
+  });
+
+  async function createWeeklyNote(previousIssueURL, assignedRoles) {
 
     const response = await octokitRest.repos.getContent({
       repo: repository.name,
       owner: repository.owner.login,
-      path: WEEKLY_TEMPLATE_LOCATION.path
+      path: WEEKLY_TEMPLATE_PATH
     });
 
     const encoded = Buffer.from(response.data.content, 'base64');
@@ -32281,7 +32285,7 @@ Assigned ${nextRoleMessage}.`
     let weeklyNote = encoded.toString('utf-8');
 
     // substitute roles
-    roles.forEach(({ login, role }) => {
+    assignedRoles.forEach(({ role, login }) => {
       weeklyNote = weeklyNote.replaceAll(`{{${role}}}`, `@${login}`);
     });
 
