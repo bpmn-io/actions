@@ -59,13 +59,18 @@ on:
 jobs:
   createReleaseIssue:
     runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'weekly')
+    outputs:
+      community-worker-assignee: ${{ steps.create-issue.outputs.community-worker-assignee }}
+      html-url: ${{ steps.create-issue.outputs.html-url }}
     steps:
-     - if: contains(github.event.issue.labels.*.name, 'weekly')
-       name: Create new Issue
+    -  name: Create new Issue
+       id: create-issue
        uses: bpmn-io/actions/weekly-notes@latest
        with:
          template-path: '.docs/WEEKLY_TEMPLATE.md'
          roles: 'moderator,summary-writer,community-worker'
+  
 ```
 
 ### Template file syntax
