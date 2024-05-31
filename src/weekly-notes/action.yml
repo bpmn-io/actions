@@ -26,6 +26,13 @@ inputs:
     required: false
     default: 1
     type: number
+outputs:
+  community-worker-assignee:
+    description: 'The assigned community worker'
+  moderator-assignee:
+    description: 'The assigned moderator'
+  summary-writer-assignee:
+    description: 'The assigned summary writer'
 runs:
   using: 'node20'
   main: 'index.js'

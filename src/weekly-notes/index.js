@@ -121,7 +121,12 @@ async function run() {
 Assigned ${nextRoleMessage}.`
   });
 
-  async function createWeeklyNote(previousIssueURL, roles) {
+  // output role assignments
+  assignedRoles.forEach(({ role, login }) => {
+    core.setOutput(`${role}-assignee`, login);
+  });
+
+  async function createWeeklyNote(previousIssueURL, assignedRoles) {
 
     const response = await octokitRest.repos.getContent({
       repo: repository.name,
@@ -134,7 +139,7 @@ Assigned ${nextRoleMessage}.`
     let weeklyNote = encoded.toString('utf-8');
 
     // substitute roles
-    roles.forEach(({ login, role }) => {
+    assignedRoles.forEach(({ role, login }) => {
       weeklyNote = weeklyNote.replaceAll(`{{${role}}}`, `@${login}`);
     });
 
