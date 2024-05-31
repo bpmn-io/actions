@@ -32172,11 +32172,6 @@ async function run() {
 
   const includeCommunityWorker = core.getBooleanInput('community-worker');
 
-  const roles = core.getInput('roles')
-    .split(',')
-    .map(r => r.trim())
-    .filter(r => includeCommunityWorker || r !== 'community-worker'); // for backwards compatibility
-
   const octokitRest = github.getOctokit(token).rest;
   const _getIssues = async (options) => {
     options = {
@@ -32210,6 +32205,29 @@ async function run() {
     return await octokitRest.issues.createComment(options);
   };
 
+  const _createWeeklyNote = async (previousIssueURL, assignedRoles) => {
+
+    const response = await octokitRest.repos.getContent({
+      repo: repository.name,
+      owner: repository.owner.login,
+      path: WEEKLY_TEMPLATE_PATH
+    });
+
+    const encoded = Buffer.from(response.data.content, 'base64');
+
+    let weeklyNote = encoded.toString('utf-8');
+
+    // substitute roles
+    assignedRoles.forEach(({ role, login }) => {
+      weeklyNote = weeklyNote.replaceAll(`{{${role}}}`, `@${login}`);
+    });
+
+    weeklyNote = weeklyNote.replaceAll('{{previousIssueURL}}', `${previousIssueURL}`);
+    weeklyNote = withoutPrelude(weeklyNote);
+
+    return weeklyNote;
+  };
+
   if (!hasWeeklyLabel(issue)) {
     return;
   }
@@ -32232,16 +32250,21 @@ async function run() {
     return;
   }
 
+  const roles = core.getInput('roles')
+    .split(',')
+    .map(r => r.trim())
+    .filter(r => includeCommunityWorker || r !== 'community-worker'); // for backwards compatibility
+
   const assignedRoles = roles.map((role, index) => {
     return {
       role,
-      ...getNextAssignee(MODERATORS, issue, index + 1)
+      ...getNextAssignee(MODERATORS, issue.assignee, index + 1)
     };
   });
 
 
   // create weekly note body
-  const body = await createWeeklyNote(issue.url, assignedRoles);
+  const body = await _createWeeklyNote(issue.url, assignedRoles);
 
   // create new issue
   const assignees = assignedRoles.map(({ login }) => login);
@@ -32272,28 +32295,7 @@ Assigned ${nextRoleMessage}.`
     core.setOutput(`${role}-assignee`, login);
   });
 
-  async function createWeeklyNote(previousIssueURL, assignedRoles) {
-
-    const response = await octokitRest.repos.getContent({
-      repo: repository.name,
-      owner: repository.owner.login,
-      path: WEEKLY_TEMPLATE_PATH
-    });
-
-    const encoded = Buffer.from(response.data.content, 'base64');
-
-    let weeklyNote = encoded.toString('utf-8');
-
-    // substitute roles
-    assignedRoles.forEach(({ role, login }) => {
-      weeklyNote = weeklyNote.replaceAll(`{{${role}}}`, `@${login}`);
-    });
-
-    weeklyNote = weeklyNote.replaceAll('{{previousIssueURL}}', `${previousIssueURL}`);
-    weeklyNote = withoutPrelude(weeklyNote);
-
-    return weeklyNote;
-  }
+  core.setOutput('html-url', createdIssue.html_url);
 }
 
 run();
