@@ -27,6 +27,8 @@ inputs:
     default: 1
     type: number
 outputs:
+  html-url:
+    description: 'The url of the created issue, if one was created'
   community-worker-assignee:
     description: 'The assigned community worker'
   moderator-assignee:
