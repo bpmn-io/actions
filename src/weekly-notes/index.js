@@ -112,7 +112,7 @@ async function run() {
   const assignedRoles = roles.map((role, index) => {
     return {
       role,
-      ...getNextAssignee(MODERATORS, issue, index + 1)
+      ...getNextAssignee(MODERATORS, issue.assignee, index + 1)
     };
   });
 
