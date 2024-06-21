@@ -138,6 +138,7 @@ async function run() {
   });
 
   core.setOutput('assignee', nextReleaseCommander);
+  core.setOutput('issue', createdIssue);
 
   // add comment to closed issue for next moderator
   await _createIssueComment({
