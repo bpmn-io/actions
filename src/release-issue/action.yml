@@ -20,6 +20,8 @@ inputs:
 outputs:
   assignee:
     description: 'The assignee of the newly created issue'
+  issue:
+    description: 'The newly created issue in JSON format'
 runs:
   using: 'node20'
   main: 'index.js'

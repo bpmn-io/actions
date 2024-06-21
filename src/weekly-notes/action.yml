@@ -35,6 +35,8 @@ outputs:
     description: 'The assigned moderator'
   summary-writer-assignee:
     description: 'The assigned summary writer'
+  issue:
+    description: 'The newly created issue in JSON format'
 runs:
   using: 'node20'
   main: 'index.js'
