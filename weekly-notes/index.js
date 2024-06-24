@@ -32295,6 +32295,7 @@ Assigned ${nextRoleMessage}.`
   });
 
   core.setOutput('html-url', createdIssue.html_url);
+  core.setOutput('issue', createdIssue);
 }
 
 run();
