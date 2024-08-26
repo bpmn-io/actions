@@ -11,8 +11,8 @@ const { findIndex } = require('min-dash');
  *
  * @return {Assignee | null}
  */
-function getNextAssignee(candidates, lastAssignee, offset = 1) {
-  const lastIndex = findIndex(candidates, c => c.login === lastAssignee.login);
+function getNextAssignee(candidates, lastAssignee={login:""}, offset = 1) {
+  const lastIndex = findIndex(candidates, c => c.login === lastAssignee?.login);
 
   // ensure assignee was a valid moderator
   if (lastIndex === -1) {
