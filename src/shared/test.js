@@ -18,7 +18,9 @@ function verify(currentLogin, nextLogin, offset) {
 }
 
 verify('walt', 'lisa');
-verify('unknown', null);
+verify('unknown', 'walt');
+verify(null, 'walt');
+verify(null, 'lisa', 2);
 verify('bert', 'walt');
 verify('walt', 'bert', 2);
 verify('walt', 'walt', 3);
