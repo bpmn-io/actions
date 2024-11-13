@@ -101,7 +101,7 @@ async function run() {
   } = await _getIssues({ state: 'all' });
 
   if (alreadyCreated(title, issues)) {
-    return core.setFailed(`Issue ${ title } already exists`);
+    return core.setFailed(`Issue ${title} already exists`);
   }
 
   const roles = core.getInput('roles')
