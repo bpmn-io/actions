@@ -152,7 +152,9 @@ Assigned ${nextRoleMessage}.`
   core.setOutput('issue', createdIssue);
 }
 
-run();
+run().catch((error) => {
+  core.setFailed(error);
+});
 
 // helper ////////////////
 

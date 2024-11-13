@@ -150,7 +150,9 @@ Assigned @${nextReleaseCommander} as the next release commander.`
 
 }
 
-run();
+run().catch((error) => {
+  core.setFailed(error);
+});
 
 // helper ////////////////
 
