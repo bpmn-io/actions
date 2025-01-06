@@ -1,0 +1,20 @@
+name: 'Setup'
+description: 'Performs CI setup for bpmn.io projects'
+runs:
+  using: "composite"
+  steps:
+    - name: Setup puppeteer/chrome apparmor profile
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        cat | sudo tee /etc/apparmor.d/chrome-puppeteer <<EOF
+        abi <abi/4.0>,
+        include <tunables/global>
+
+        profile chrome /@{HOME}/.cache/puppeteer/chrome/*/chrome-linux64/chrome flags=(unconfined) {
+          userns,
+
+          include if exists <local/chrome>
+        }
+        EOF
+        sudo service apparmor reload
