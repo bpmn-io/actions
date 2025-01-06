@@ -117,3 +117,36 @@ labels:
 
 * [ ] Discuss weekly things!
 ```
+
+
+## `setup`
+
+Setup your runner so things just work.
+
+### Parameters
+
+*None*
+
+### Outputs
+
+*None*
+
+### Usage
+
+```yml
+# .github/workflows/CI.yml
+name: CI
+on: [ push, pull_request ]
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    ...
+    - name: Project setup
+      uses: bpmn-io/actions/setup@latest
+    - name: Build project
+      run: npm run build
+```
