@@ -18,3 +18,19 @@ runs:
         }
         EOF
         sudo service apparmor reload
+
+    - name: Setup electron apparmor profile
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        cat | sudo tee /etc/apparmor.d/electron <<EOF
+        abi <abi/4.0>,
+        include <tunables/global>
+
+        profile electron /@{HOME}/**/node_modules/electron/dist/electron flags=(unconfined) {
+          userns,
+
+          include if exists <local/electron>
+        }
+        EOF
+        sudo service apparmor reload
