@@ -34,3 +34,19 @@ runs:
         }
         EOF
         sudo service apparmor reload
+
+    - name: Setup camunda-modeler apparmor profile
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        cat | sudo tee /etc/apparmor.d/camunda-modeler <<EOF
+        abi <abi/4.0>,
+        include <tunables/global>
+
+        profile camunda-modeler /@{HOME}/**/camunda-modeler-*/camunda-modeler-*/camunda-modeler flags=(unconfined) {
+          userns,
+
+          include if exists <local/camunda-modeler>
+        }
+        EOF
+        sudo service apparmor reload
