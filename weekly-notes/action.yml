@@ -1,0 +1,42 @@
+name: 'Open weekly issue'
+description: 'Create new release issue when the last one was closed'
+inputs:
+  token:
+    description: 'GITHUB_TOKEN or a repo scoped PAT'
+    default: ${{ github.token }}
+  template-path:
+    description: 'Relative path to the weekly template'
+    required: true
+    default: '.github/ISSUE_TEMPLATE/WEEKLY_NOTE.md'
+  moderators-path:
+    description: 'Relative path to the list of moderators'
+  community-worker:
+    description: 'Community worker = true|false. Set to false to not assign a community worker, will default to true'
+    required: false
+    default: true
+    type: boolean
+    deprecationMessage: 'This option is deprecated. Define your required roles through `roles`'
+  roles:
+    description: 'Comma separated list of roles. Roles will be assigned round-robin from the list of moderators.'
+    required: false
+    default: 'moderator,summary-writer,community-worker'
+    type: string
+  week-interval:
+    description: 'The jump of the weeks used in the GitHub issue title. This is useful if you want to open the issue every 2 weeks or so.'
+    required: false
+    default: 1
+    type: number
+outputs:
+  html-url:
+    description: 'The url of the created issue, if one was created'
+  community-worker-assignee:
+    description: 'The assigned community worker'
+  moderator-assignee:
+    description: 'The assigned moderator'
+  summary-writer-assignee:
+    description: 'The assigned summary writer'
+  issue:
+    description: 'The newly created issue in JSON format'
+runs:
+  using: 'node20'
+  main: 'index.js'
