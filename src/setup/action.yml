@@ -3,50 +3,13 @@ description: 'Performs CI setup for bpmn.io projects'
 runs:
   using: "composite"
   steps:
-    - name: Setup puppeteer/chrome apparmor profile
+    - name: Setup chromium sandbox
       if: runner.os == 'Linux'
       shell: bash
       run: |
-        cat | sudo tee /etc/apparmor.d/chrome-puppeteer <<EOF
-        abi <abi/4.0>,
-        include <tunables/global>
+        SANDBOX_LOCATION=/opt/google/chrome/chrome-sandbox
 
-        profile chrome /@{HOME}/.cache/puppeteer/chrome/*/chrome-linux64/chrome flags=(unconfined) {
-          userns,
+        sudo chown root $SANDBOX_LOCATION
+        sudo chmod 4755 $SANDBOX_LOCATION
 
-          include if exists <local/chrome>
-        }
-        EOF
-        sudo service apparmor reload
-
-    - name: Setup electron apparmor profile
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        cat | sudo tee /etc/apparmor.d/electron <<EOF
-        abi <abi/4.0>,
-        include <tunables/global>
-
-        profile electron /@{HOME}/**/node_modules/electron/dist/electron flags=(unconfined) {
-          userns,
-
-          include if exists <local/electron>
-        }
-        EOF
-        sudo service apparmor reload
-
-    - name: Setup camunda-modeler apparmor profile
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        cat | sudo tee /etc/apparmor.d/camunda-modeler <<EOF
-        abi <abi/4.0>,
-        include <tunables/global>
-
-        profile camunda-modeler /@{HOME}/**/camunda-modeler-*/camunda-modeler-*/camunda-modeler flags=(unconfined) {
-          userns,
-
-          include if exists <local/camunda-modeler>
-        }
-        EOF
-        sudo service apparmor reload
+        echo "CHROME_DEVEL_SANDBOX=$SANDBOX_LOCATION" >> "$GITHUB_ENV"
