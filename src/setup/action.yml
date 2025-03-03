@@ -13,3 +13,17 @@ runs:
         sudo chmod 4755 $SANDBOX_LOCATION
 
         echo "CHROME_DEVEL_SANDBOX=$SANDBOX_LOCATION" >> "$GITHUB_ENV"
+
+    - name: Setup camunda-modeler apparmor profile # required for jobs running camunda-modeler executable
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        cat | sudo tee /etc/apparmor.d/camunda-modeler <<EOF
+        abi <abi/4.0>,
+        include <tunables/global>
+        profile camunda-modeler /@{HOME}/**/camunda-modeler-*/camunda-modeler-*/camunda-modeler flags=(unconfined) {
+          userns,
+          include if exists <local/camunda-modeler>
+        }
+        EOF
+        sudo service apparmor reload
