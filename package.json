@@ -9,7 +9,7 @@
     "build:release-issue": "ncc build src/release-issue/index.js -o dist/release-issue/ && copyfiles -f src/release-issue/action.yml dist/release-issue",
     "build:weekly-notes": "ncc build src/weekly-notes/index.js -o dist/weekly-notes/ && copyfiles -f src/weekly-notes/action.yml dist/weekly-notes",
     "build:setup": "mkdir -p dist/setup && copyfiles -f src/setup/action.yml dist/setup",
-    "test": "node test/test.js"
+    "test": "mocha test/test.js"
   },
   "keywords": [
     "gh-actions"
@@ -28,9 +28,11 @@
   "devDependencies": {
     "@types/node": "^20.12.12",
     "@vercel/ncc": "^0.38.2",
+    "chai": "^6.2.0",
     "copyfiles": "^2.4.1",
     "eslint": "^9.14.0",
     "eslint-plugin-bpmn-io": "^2.0.2",
+    "mocha": "^11.7.4",
     "npm-run-all": "^4.1.5"
   }
 }
