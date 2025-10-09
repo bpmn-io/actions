@@ -6,14 +6,14 @@ const {
 } = require('min-dash');
 
 const {
+  getFirstAssignee,
   getWeek,
-  getNextIssueTitle
+  getNextIssueTitle,
+  withAssignee
 } = require('./util');
 
 const {
-  getFirstAssignee,
-  getNextAssignee,
-  withAssignee
+  getNextAssignee
 } = require('../shared/util');
 
 async function run() {
