@@ -10,7 +10,11 @@ const {
   getNextIssueTitle
 } = require('./util');
 
-const { getNextAssignee } = require('../shared/util');
+const {
+  getFirstAssignee,
+  getNextAssignee,
+  withAssignee
+} = require('../shared/util');
 
 async function run() {
 
@@ -78,6 +82,7 @@ async function run() {
 
     weeklyNote = weeklyNote.replaceAll('{{previousIssueURL}}', `${previousIssueURL}`);
     weeklyNote = withoutPrelude(weeklyNote);
+    weeklyNote = withAssignee(weeklyNote, assignedRoles[0].login);
 
     return weeklyNote;
   };
@@ -109,10 +114,13 @@ async function run() {
     .map(r => r.trim())
     .filter(r => includeCommunityWorker || r !== 'community-worker'); // for backwards compatibility
 
+  // parse assignee from issue body or use issue assignee as fallback
+  const assignee = getFirstAssignee(issue.body) || issue.assignee;
+
   const assignedRoles = roles.map((role, index) => {
     return {
       role,
-      ...getNextAssignee(MODERATORS, issue.assignee, index + 1)
+      ...getNextAssignee(MODERATORS, assignee, index + 1)
     };
   });
 

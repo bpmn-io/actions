@@ -60,3 +60,18 @@ module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, curr
 
   return `W${upcomingWeekNr} - ${upcomingYearNr}`;
 };
+
+module.exports.getFirstAssignee = function getFirstAssignee(issueContents) {
+  const assigneeRegex = /<!-- assignee: @(\w+) -->/g;
+  const match = assigneeRegex.exec(issueContents);
+  return match ? match[1] : null;
+};
+
+module.exports.withAssignee = function withAssignee(issueContents, assignee) {
+  if (!assignee) {
+    throw new Error('assignee must be provided');
+  }
+
+  const assigneeTag = `<!-- assignee: @${assignee} -->`;
+  return `${issueContents}\n\n${assigneeTag}`;
+};
