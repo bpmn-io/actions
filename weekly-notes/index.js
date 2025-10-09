@@ -30038,6 +30038,22 @@ module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, curr
   return `W${upcomingWeekNr} - ${upcomingYearNr}`;
 };
 
+module.exports.getFirstAssignee = function getFirstAssignee(issueContents) {
+  const assigneeRegex = /<!-- assignee: @(\w+) -->/g;
+  const match = assigneeRegex.exec(issueContents);
+  return match ? match[1] : null;
+};
+
+module.exports.withAssignee = function withAssignee(issueContents, assignee) {
+  if (!assignee) {
+    throw new Error('assignee must be provided');
+  }
+
+  const assigneeTag = `<!-- assignee: @${assignee} -->`;
+  return `${issueContents}\n\n${assigneeTag}`;
+};
+
+
 /***/ }),
 
 /***/ 2613:
@@ -32874,7 +32890,11 @@ const {
   getNextIssueTitle
 } = __nccwpck_require__(6309);
 
-const { getNextAssignee } = __nccwpck_require__(6067);
+const {
+  getFirstAssignee,
+  getNextAssignee,
+  withAssignee
+} = __nccwpck_require__(6067);
 
 async function run() {
 
@@ -32942,6 +32962,7 @@ async function run() {
 
     weeklyNote = weeklyNote.replaceAll('{{previousIssueURL}}', `${previousIssueURL}`);
     weeklyNote = withoutPrelude(weeklyNote);
+    weeklyNote = withAssignee(weeklyNote, assignedRoles[0].login);
 
     return weeklyNote;
   };
@@ -32973,10 +32994,13 @@ async function run() {
     .map(r => r.trim())
     .filter(r => includeCommunityWorker || r !== 'community-worker'); // for backwards compatibility
 
+  // parse assignee from issue body or use issue assignee as fallback
+  const assignee = getFirstAssignee(issue.body) || issue.assignee;
+
   const assignedRoles = roles.map((role, index) => {
     return {
       role,
-      ...getNextAssignee(MODERATORS, issue.assignee, index + 1)
+      ...getNextAssignee(MODERATORS, assignee, index + 1)
     };
   });
 
