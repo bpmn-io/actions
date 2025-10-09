@@ -32886,14 +32886,14 @@ const {
 } = __nccwpck_require__(9375);
 
 const {
+  getFirstAssignee,
   getWeek,
-  getNextIssueTitle
+  getNextIssueTitle,
+  withAssignee
 } = __nccwpck_require__(6309);
 
 const {
-  getFirstAssignee,
-  getNextAssignee,
-  withAssignee
+  getNextAssignee
 } = __nccwpck_require__(6067);
 
 async function run() {
