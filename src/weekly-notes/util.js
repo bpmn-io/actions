@@ -61,17 +61,25 @@ module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, curr
   return `W${upcomingWeekNr} - ${upcomingYearNr}`;
 };
 
+/**
+ * @param {string} issueContents
+ * @returns {import("../shared/util").Assignee}
+ */
 module.exports.getFirstAssignee = function getFirstAssignee(issueContents) {
   const assigneeRegex = /<!-- assignee: @(\w+) -->/g;
   const match = assigneeRegex.exec(issueContents);
-  return match ? match[1] : null;
+  return match ? { login: match[1] } : null;
 };
 
+/**
+ * @param {string} issueContents
+ * @param {import("../shared/util").Assignee} assignee
+ */
 module.exports.withAssignee = function withAssignee(issueContents, assignee) {
   if (!assignee) {
     throw new Error('assignee must be provided');
   }
 
-  const assigneeTag = `<!-- assignee: @${assignee} -->`;
+  const assigneeTag = `<!-- assignee: @${assignee.login} -->`;
   return `${issueContents}\n\n${assigneeTag}`;
 };

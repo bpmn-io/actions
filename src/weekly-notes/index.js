@@ -118,7 +118,7 @@ async function run() {
 
   // parse assignee from issue body or use issue assignee as fallback
   const assignee = getFirstAssignee(issue.body) || issue.assignee;
-  core.debug(`Assignee: ${assignee}`);
+  core.debug(`Assignee: ${JSON.stringify(assignee)}`);
 
   const assignedRoles = roles.map((role, index) => {
     return {
