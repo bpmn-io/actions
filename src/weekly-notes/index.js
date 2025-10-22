@@ -19,10 +19,12 @@ const {
 async function run() {
 
   const MODERATORS = await require('../shared/moderators');
+  core.debug(`Available Moderators: ${JSON.stringify(MODERATORS)}`);
 
   const WEEKLY_TEMPLATE_PATH = core.getInput('template-path');
 
   const issue = github.context.payload.issue;
+  core.debug(`Issue: ${JSON.stringify(issue)}`);
 
   const repository = github.context.payload.repository;
 
@@ -116,6 +118,7 @@ async function run() {
 
   // parse assignee from issue body or use issue assignee as fallback
   const assignee = getFirstAssignee(issue.body) || issue.assignee;
+  core.debug(`Assignee: ${assignee}`);
 
   const assignedRoles = roles.map((role, index) => {
     return {
@@ -123,6 +126,7 @@ async function run() {
       ...getNextAssignee(MODERATORS, assignee, index + 1)
     };
   });
+  core.debug(`Next Roles: ${JSON.stringify(assignedRoles)}`);
 
   // create weekly note body
   const body = await _createWeeklyNote(issue.url, assignedRoles);
