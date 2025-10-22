@@ -84,7 +84,7 @@ async function run() {
 
     weeklyNote = weeklyNote.replaceAll('{{previousIssueURL}}', `${previousIssueURL}`);
     weeklyNote = withoutPrelude(weeklyNote);
-    weeklyNote = withAssignee(weeklyNote, assignedRoles[0].login);
+    weeklyNote = withAssignee(weeklyNote, assignedRoles[0]);
 
     return weeklyNote;
   };
