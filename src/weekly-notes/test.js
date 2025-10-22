@@ -61,7 +61,7 @@ describe('weekly-notes/util', function() {
       const assignee = getFirstAssignee(issueContents);
 
       // then
-      expect(assignee).to.equal('johndoe');
+      expect(assignee.login).to.equal('johndoe');
     });
 
 
@@ -87,7 +87,7 @@ describe('weekly-notes/util', function() {
       const assignee = getFirstAssignee(issueContents);
 
       // then
-      expect(assignee).to.equal('first');
+      expect(assignee.login).to.equal('first');
     });
 
     it('should handle assignee tag in the middle of content', function() {
@@ -99,7 +99,7 @@ describe('weekly-notes/util', function() {
       const assignee = getFirstAssignee(issueContents);
 
       // then
-      expect(assignee).to.equal('username');
+      expect(assignee.login).to.equal('username');
     });
 
 
@@ -125,7 +125,7 @@ describe('weekly-notes/util', function() {
       const issueContents = 'Original issue content';
 
       // when
-      const result = withAssignee(issueContents, 'johndoe');
+      const result = withAssignee(issueContents, { login: 'johndoe' });
 
       // then
       expect(result).to.equal('Original issue content\n\n<!-- assignee: @johndoe -->');
@@ -138,7 +138,7 @@ describe('weekly-notes/util', function() {
       const issueContents = '';
 
       // when
-      const result = withAssignee(issueContents, 'username');
+      const result = withAssignee(issueContents, { login: 'username' });
 
       // then
       expect(result).to.equal('\n\n<!-- assignee: @username -->');
