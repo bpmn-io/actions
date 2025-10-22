@@ -30038,18 +30038,26 @@ module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, curr
   return `W${upcomingWeekNr} - ${upcomingYearNr}`;
 };
 
+/**
+ * @param {string} issueContents
+ * @returns {import("../shared/util").Assignee}
+ */
 module.exports.getFirstAssignee = function getFirstAssignee(issueContents) {
   const assigneeRegex = /<!-- assignee: @(\w+) -->/g;
   const match = assigneeRegex.exec(issueContents);
-  return match ? match[1] : null;
+  return match ? { login: match[1] } : null;
 };
 
+/**
+ * @param {string} issueContents
+ * @param {import("../shared/util").Assignee} assignee
+ */
 module.exports.withAssignee = function withAssignee(issueContents, assignee) {
   if (!assignee) {
     throw new Error('assignee must be provided');
   }
 
-  const assigneeTag = `<!-- assignee: @${assignee} -->`;
+  const assigneeTag = `<!-- assignee: @${assignee.login} -->`;
   return `${issueContents}\n\n${assigneeTag}`;
 };
 
@@ -32899,10 +32907,12 @@ const {
 async function run() {
 
   const MODERATORS = await __nccwpck_require__(6207);
+  core.debug(`Available Moderators: ${JSON.stringify(MODERATORS)}`);
 
   const WEEKLY_TEMPLATE_PATH = core.getInput('template-path');
 
   const issue = github.context.payload.issue;
+  core.debug(`Issue: ${JSON.stringify(issue)}`);
 
   const repository = github.context.payload.repository;
 
@@ -32996,6 +33006,7 @@ async function run() {
 
   // parse assignee from issue body or use issue assignee as fallback
   const assignee = getFirstAssignee(issue.body) || issue.assignee;
+  core.debug(`Assignee: ${JSON.stringify(assignee)}`);
 
   const assignedRoles = roles.map((role, index) => {
     return {
@@ -33003,6 +33014,7 @@ async function run() {
       ...getNextAssignee(MODERATORS, assignee, index + 1)
     };
   });
+  core.debug(`Next Roles: ${JSON.stringify(assignedRoles)}`);
 
   // create weekly note body
   const body = await _createWeeklyNote(issue.url, assignedRoles);
