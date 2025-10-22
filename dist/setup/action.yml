@@ -1,0 +1,29 @@
+name: 'Setup'
+description: 'Performs CI setup for bpmn.io projects'
+runs:
+  using: "composite"
+  steps:
+    - name: Setup chromium sandbox
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        SANDBOX_LOCATION=/opt/google/chrome/chrome-sandbox
+
+        sudo chown root $SANDBOX_LOCATION
+        sudo chmod 4755 $SANDBOX_LOCATION
+
+        echo "CHROME_DEVEL_SANDBOX=$SANDBOX_LOCATION" >> "$GITHUB_ENV"
+
+    - name: Setup camunda-modeler apparmor profile # required for jobs running camunda-modeler executable
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        cat | sudo tee /etc/apparmor.d/camunda-modeler <<EOF
+        abi <abi/4.0>,
+        include <tunables/global>
+        profile camunda-modeler /@{HOME}/**/camunda-modeler-*/camunda-modeler-*/camunda-modeler flags=(unconfined) {
+          userns,
+          include if exists <local/camunda-modeler>
+        }
+        EOF
+        sudo service apparmor reload

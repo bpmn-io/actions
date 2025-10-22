@@ -1,0 +1,27 @@
+name: 'Open release issue'
+description: 'Create new release issue when the last one was closed'
+inputs:
+  token:
+    description: 'GITHUB_TOKEN or a repo scoped PAT.'
+    default: ${{ github.token }}
+  template-path:
+    description: 'Relative path to the release template'
+    required: true
+    default: '.github/ISSUE_TEMPLATE/RELEASE.md'
+  package-path:
+    description: 'Relative path to the package.json'
+    required: true
+    default: 'package.json'
+  moderators-path:
+    description: 'Relative path to the list of moderators'
+  labels:
+    description: 'Labels to set for the created issue as a comma separated list'
+    default: 'release,ready'
+outputs:
+  assignee:
+    description: 'The assignee of the newly created issue'
+  issue:
+    description: 'The newly created issue in JSON format'
+runs:
+  using: 'node20'
+  main: 'index.js'
