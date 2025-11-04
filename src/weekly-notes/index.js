@@ -23,6 +23,8 @@ async function run() {
 
   const WEEKLY_TEMPLATE_PATH = core.getInput('template-path');
 
+  const TITLE_TEMPLATE = core.getInput('title-template');
+
   const issue = github.context.payload.issue;
   core.debug(`Issue: ${JSON.stringify(issue)}`);
 
@@ -95,11 +97,12 @@ async function run() {
 
   const currentWeek = getCurrentWeek();
   const weekInterval = parseInt(core.getInput('week-interval'), 10);
-
+  
   // set title to upcoming calendar week + year
   const title = getNextIssueTitle(
     weekInterval,
-    currentWeek
+    currentWeek,
+    TITLE_TEMPLATE
   );
 
   // don't create weekly twice

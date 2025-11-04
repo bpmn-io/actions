@@ -16,6 +16,7 @@ Automatically create the issue for the next release.
 - `package-path`: Path to the package.json (used for next version number). Default: `package.json`
 - `moderators-path`: Optional path to the moderators file. Defaults to the bpmn-io moderators.
 - `labels`: A comma-separated list of the labels you want to assign in the release issue.
+- `title-template`: Optional issue title template literal that can reference the `${week}` and the `${year}`.
 
 ### Outputs
 
