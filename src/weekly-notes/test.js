@@ -68,7 +68,7 @@ describe('weekly-notes/util', function() {
 
     it('should evaluate a template without placeholders', function() {
       const template = 'Hello World';
-      const data = {hello: 'Ignored'};
+      const data = { hello: 'Ignored' };
       const result = evaluateTemplate(template, data);
       expect(result).to.equal('Hello World');
     });

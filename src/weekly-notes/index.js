@@ -97,7 +97,7 @@ async function run() {
 
   const currentWeek = getCurrentWeek();
   const weekInterval = parseInt(core.getInput('week-interval'), 10);
-  
+
   // set title to upcoming calendar week + year
   const title = getNextIssueTitle(
     weekInterval,

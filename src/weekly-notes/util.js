@@ -45,7 +45,7 @@ module.exports.getWeek = function(date) {
  */
 module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, currentWeek, template) {
 
-  if(!template) {
+  if (!template) {
     template = 'W${week} - ${year}';
   }
 
@@ -62,13 +62,13 @@ module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, curr
 
   const upcomingWeekNr = (Math.min(currentWeekNr, 52) + weekInterval - 1) % 52 + 1;
   const upcomingYearNr = upcomingWeekNr < currentWeekNr ? currentYearNr + 1 : currentYearNr;
-  
+
   return evaluateTemplate(template, { week: upcomingWeekNr, year: upcomingYearNr });
 };
 
 /**
  * Evaluates a template literal with the provided data.
- * 
+ *
  * @param {string} template
  * @param {Object} data
  * @returns {string}
@@ -77,7 +77,7 @@ function evaluateTemplate(template, data) {
   const func = new Function(...Object.keys(data), `return \`${template}\`;`);
   return func(...Object.values(data));
 }
-module.exports.evaluateTemplate = evaluateTemplate
+module.exports.evaluateTemplate = evaluateTemplate;
 
 /**
  * @param {string} issueContents
