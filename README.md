@@ -16,7 +16,6 @@ Automatically create the issue for the next release.
 - `package-path`: Path to the package.json (used for next version number). Default: `package.json`
 - `moderators-path`: Optional path to the moderators file. Defaults to the bpmn-io moderators.
 - `labels`: A comma-separated list of the labels you want to assign in the release issue.
-- `title-template`: Optional issue title template literal that can reference the `${week}` and the `${year}`.
 
 ### Outputs
 
@@ -60,6 +59,7 @@ Automatically create the issue for the next modeling weekly.
 - `summary-writer-assignee`: Summary writer assigned, if assignment took place
 - `community-worker-assignee`: Community worker assigned, if assignment took place
 - `html-url`: URL of the newly created weekly note, if one got created
+- `title-template`: Optional issue title template literal that can reference the `${week}` and the `${year}`.
 
 ### Usage
 

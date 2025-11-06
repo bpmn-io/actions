@@ -74,8 +74,9 @@ module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, curr
  * @returns {string}
  */
 function evaluateTemplate(template, data) {
-  const func = new Function(...Object.keys(data), `return \`${template}\`;`);
-  return func(...Object.values(data));
+  return template.replace(/\$\{(\w+)\}/g, (match, key) => {
+    return data.hasOwnProperty(key) ? data[key] : match;
+  });
 }
 module.exports.evaluateTemplate = evaluateTemplate;
 
