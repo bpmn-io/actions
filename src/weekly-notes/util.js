@@ -75,7 +75,7 @@ module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, curr
  */
 function evaluateTemplate(template, data) {
   return template.replace(/\$\{(\w+)\}/g, (match, key) => {
-    return data.hasOwnProperty(key) ? data[key] : match;
+    return Object.prototype.hasOwnProperty.call(data, key) ? data[key] : match;
   });
 }
 module.exports.evaluateTemplate = evaluateTemplate;
