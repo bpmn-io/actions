@@ -19,7 +19,7 @@ describe('weekly-notes/util', function() {
     });
 
     it('should calculate next week title correctly for week 1 with a custom template', function() {
-      expect(getNextIssueTitle(1, { weekNumber: 1, year: 2000 }, 'Custom Template in week ${week} of year ${year}')).to.equal('Custom Template in week 2 of year 2000');
+      expect(getNextIssueTitle(1, { weekNumber: 1, year: 2000 }, 'Custom Template in week {{week}} of year {{year}}')).to.equal('Custom Template in week 2 of year 2000');
     });
 
     it('should calculate next week title correctly for 2 weeks ahead from week 1', function() {
@@ -60,7 +60,7 @@ describe('weekly-notes/util', function() {
   describe('#evaluateTemplate', function() {
 
     it('should evaluate template with provided data', function() {
-      const template = 'Hello ${name}';
+      const template = 'Hello {{name}}';
       const data = { name: 'World' };
       const result = evaluateTemplate(template, data);
       expect(result).to.equal('Hello World');

@@ -59,7 +59,7 @@ Automatically create the issue for the next modeling weekly.
 - `summary-writer-assignee`: Summary writer assigned, if assignment took place
 - `community-worker-assignee`: Community worker assigned, if assignment took place
 - `html-url`: URL of the newly created weekly note, if one got created
-- `title-template`: Optional issue title template literal that can reference the `${week}` and the `${year}`.
+- `title-template`: Optional issue title template literal that can reference the `{{week}}` and the `{{year}}`.
 
 ### Usage
 

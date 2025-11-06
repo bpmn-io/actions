@@ -46,7 +46,7 @@ module.exports.getWeek = function(date) {
 module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, currentWeek, template) {
 
   if (!template) {
-    template = 'W${week} - ${year}';
+    template = 'W{{week}} - {{year}}';
   }
 
   console.debug('[weekly-notes] computing next issue title', {
@@ -74,7 +74,7 @@ module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, curr
  * @returns {string}
  */
 function evaluateTemplate(template, data) {
-  return template.replace(/\$\{(\w+)\}/g, (match, key) => {
+  return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
     return Object.prototype.hasOwnProperty.call(data, key) ? data[key] : match;
   });
 }
