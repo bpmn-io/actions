@@ -26,6 +26,11 @@ inputs:
     required: false
     default: 1
     type: number
+  title-template:
+    description: 'Optional issue title template literal that can reference the `{{week}}` and the `{{year}}`.'
+    required: false
+    default: 'W{{week}} - {{year}}'
+    type: string
 outputs:
   html-url:
     description: 'The url of the created issue, if one was created'

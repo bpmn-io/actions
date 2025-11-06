@@ -52,6 +52,7 @@ Automatically create the issue for the next modeling weekly.
 - `moderators-path`: Optional path to the moderators file. Defaults to the bpmn-io moderators.
 - `roles`: A comma-separated list of the roles you want to assign in the weekly.
 - `week-interval`: The time (in weeks) between two weeklies. Usefuly for biweekly and other cadences.
+- `title-template`: Optional issue title template literal that can reference the `{{week}}` and the `{{year}}`.
 
 ### Outputs
 
@@ -82,7 +83,7 @@ jobs:
        with:
          template-path: '.docs/WEEKLY_TEMPLATE.md'
          roles: 'moderator,summary-writer,community-worker'
-  
+
 ```
 
 ### Template file syntax
