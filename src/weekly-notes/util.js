@@ -40,6 +40,7 @@ module.exports.getWeek = function(date) {
  *   weekNumber: number,
  *   year: number
  * } } currentWeek
+ * @param {string} template
  *
  * @return {string}
  */
