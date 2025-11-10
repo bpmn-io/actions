@@ -22,8 +22,13 @@ async function run() {
   core.debug(`Available Moderators: ${JSON.stringify(MODERATORS)}`);
 
   const WEEKLY_TEMPLATE_PATH = core.getInput('template-path');
+  core.debug(`Template Path: ${JSON.stringify(WEEKLY_TEMPLATE_PATH)}`);
 
   const TITLE_TEMPLATE = core.getInput('title-template');
+  core.debug(`Title Template: ${JSON.stringify(TITLE_TEMPLATE)}`);
+
+  const LABEL = core.getInput('label')?.trim() || 'weekly';
+  core.debug(`Issue Label: ${JSON.stringify(LABEL)}`);
 
   const issue = github.context.payload.issue;
   core.debug(`Issue: ${JSON.stringify(issue)}`);
@@ -91,7 +96,7 @@ async function run() {
     return weeklyNote;
   };
 
-  if (!hasWeeklyLabel(issue)) {
+  if (!hasWeeklyLabel(issue, LABEL)) {
     return;
   }
 
@@ -142,7 +147,7 @@ async function run() {
   } = await _createIssue({
     body,
     title,
-    labels: [ 'weekly', 'ready' ],
+    labels: [ LABEL, 'ready' ],
     assignees
   });
 
@@ -173,12 +178,12 @@ run().catch((error) => {
 
 // helper ////////////////
 
-function hasWeeklyLabel(issue) {
+function hasWeeklyLabel(issue, label) {
   const {
     labels
   } = issue;
 
-  return !!find(labels, (l) => l.name === 'weekly');
+  return !!find(labels, (l) => l.name === label);
 }
 
 function alreadyCreated(weeklyTitle, issues) {
