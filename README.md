@@ -53,7 +53,7 @@ Automatically create the issue for the next modeling weekly.
 - `roles`: A comma-separated list of the roles you want to assign in the weekly.
 - `week-interval`: The time (in weeks) between two weeklies. Usefuly for biweekly and other cadences.
 - `title-template`: Optional issue title template literal that can reference the `{{week}}` and the `{{year}}`.
-- `label`: Optional issue label. Defaults to: `weekly`.
+- `label`: Label used to identify the issue. Defaults to: `weekly`.
 
 ### Outputs
 
