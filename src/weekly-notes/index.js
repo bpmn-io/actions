@@ -27,8 +27,8 @@ async function run() {
   const TITLE_TEMPLATE = core.getInput('title-template');
   core.debug(`Title Template: ${JSON.stringify(TITLE_TEMPLATE)}`);
 
-  const LABEL = core.getInput('label')?.trim() || 'weekly';
-  core.debug(`Issue Label: ${JSON.stringify(LABEL)}`);
+  const WEEKLY_LABEL = core.getInput('label')?.trim() || 'weekly';
+  core.debug(`Issue Label: ${JSON.stringify(WEEKLY_LABEL)}`);
 
   const issue = github.context.payload.issue;
   core.debug(`Issue: ${JSON.stringify(issue)}`);
@@ -96,7 +96,7 @@ async function run() {
     return weeklyNote;
   };
 
-  if (!hasWeeklyLabel(issue, LABEL)) {
+  if (!hasLabel(issue, WEEKLY_LABEL)) {
     return;
   }
 
@@ -147,7 +147,7 @@ async function run() {
   } = await _createIssue({
     body,
     title,
-    labels: [ LABEL, 'ready' ],
+    labels: [ WEEKLY_LABEL, 'ready' ],
     assignees
   });
 
@@ -178,7 +178,7 @@ run().catch((error) => {
 
 // helper ////////////////
 
-function hasWeeklyLabel(issue, label) {
+function hasLabel(issue, label) {
   const {
     labels
   } = issue;
