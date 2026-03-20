@@ -1,16 +1,16 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
+import * as core from '@actions/core';
+import * as github from '@actions/github';
 
-const { find } = require('min-dash');
+import { find } from 'min-dash';
 
-const { getNextAssignee } = require('../shared/util.js');
+import { getNextAssignee } from '../shared/util.js';
+import MODERATORS_PROMISE from '../shared/moderators.js';
 
-const semver = require('semver');
+import semver from 'semver';
 
 
 async function run() {
-
-  const MODERATORS = await require('../shared/moderators');
+  const MODERATORS = await MODERATORS_PROMISE;
 
   const RELEASE_TEMPLATE_CONFIG = {
     templatePath: core.getInput('template-path'),

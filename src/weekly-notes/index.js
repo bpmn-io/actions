@@ -1,24 +1,24 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
+import * as core from '@actions/core';
+import * as github from '@actions/github';
 
-const {
+import {
   find
-} = require('min-dash');
+} from 'min-dash';
 
-const {
+import {
   getFirstAssignee,
   getWeek,
   getNextIssueTitle,
   withAssignee
-} = require('./util');
+} from './util.js';
 
-const {
+import {
   getNextAssignee
-} = require('../shared/util');
+} from '../shared/util.js';
+import MODERATORS_PROMISE from '../shared/moderators.js';
 
 async function run() {
-
-  const MODERATORS = await require('../shared/moderators');
+  const MODERATORS = await MODERATORS_PROMISE;
   core.debug(`Available Moderators: ${JSON.stringify(MODERATORS)}`);
 
   const WEEKLY_TEMPLATE_PATH = core.getInput('template-path');

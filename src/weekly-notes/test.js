@@ -1,10 +1,10 @@
-const { expect } = require('chai');
-const {
+import { expect } from 'chai';
+import {
   getNextIssueTitle,
   getFirstAssignee,
   withAssignee,
   evaluateTemplate
-} = require('./util.js');
+} from './util.js';
 
 describe('weekly-notes/util', function() {
 

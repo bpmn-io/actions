@@ -12,7 +12,7 @@
  *
  * @returns {CalendarWeek}
  */
-module.exports.getWeek = function(date) {
+export function getWeek(date) {
 
   date.setHours(0, 0, 0, 0);
 
@@ -32,7 +32,7 @@ module.exports.getWeek = function(date) {
     weekNumber,
     year
   };
-};
+}
 
 /**
  * @param {number} weekInterval
@@ -44,7 +44,7 @@ module.exports.getWeek = function(date) {
  *
  * @return {string}
  */
-module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, currentWeek, template) {
+export function getNextIssueTitle(weekInterval, currentWeek, template) {
 
   if (!template) {
     template = 'W{{week}} - {{year}}';
@@ -65,7 +65,7 @@ module.exports.getNextIssueTitle = function getNextIssueTitle(weekInterval, curr
   const upcomingYearNr = upcomingWeekNr < currentWeekNr ? currentYearNr + 1 : currentYearNr;
 
   return evaluateTemplate(template, { week: upcomingWeekNr, year: upcomingYearNr });
-};
+}
 
 /**
  * Evaluates a template literal with the provided data.
@@ -79,27 +79,27 @@ function evaluateTemplate(template, data) {
     return Object.prototype.hasOwnProperty.call(data, key) ? data[key] : match;
   });
 }
-module.exports.evaluateTemplate = evaluateTemplate;
+export { evaluateTemplate };
 
 /**
  * @param {string} issueContents
  * @returns {import("../shared/util").Assignee}
  */
-module.exports.getFirstAssignee = function getFirstAssignee(issueContents) {
+export function getFirstAssignee(issueContents) {
   const assigneeRegex = /<!-- assignee: @(\w+) -->/g;
   const match = assigneeRegex.exec(issueContents);
   return match ? { login: match[1] } : null;
-};
+}
 
 /**
  * @param {string} issueContents
  * @param {import("../shared/util").Assignee} assignee
  */
-module.exports.withAssignee = function withAssignee(issueContents, assignee) {
+export function withAssignee(issueContents, assignee) {
   if (!assignee) {
     throw new Error('assignee must be provided');
   }
 
   const assigneeTag = `<!-- assignee: @${assignee.login} -->`;
   return `${issueContents}\n\n${assigneeTag}`;
-};
+}

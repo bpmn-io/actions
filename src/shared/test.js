@@ -1,8 +1,8 @@
-const {
+import {
   getNextAssignee
-} = require('./util.js');
+} from './util.js';
 
-const { expect } = require('chai');
+import { expect } from 'chai';
 
 const assignees = [
   { login: 'walt', fullName: 'WALT' },

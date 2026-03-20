@@ -1,7 +1,7 @@
-const DEFAULT_MODERATORS = require('./DEFAULT_MODERATORS');
+import DEFAULT_MODERATORS from './DEFAULT_MODERATORS.js';
 
-const core = require('@actions/core');
-const github = require('@actions/github');
+import * as core from '@actions/core';
+import * as github from '@actions/github';
 
 const token = core.getInput('token');
 const moderatorsPath = core.getInput('moderators-path');
@@ -9,9 +9,9 @@ const moderatorsPath = core.getInput('moderators-path');
 const octokitRest = github.getOctokit(token).rest;
 const repository = github.context.payload.repository;
 
-const moderators = moderatorsPath && getModerators();
+const moderators = moderatorsPath ? getModerators() : Promise.resolve(DEFAULT_MODERATORS);
 
-module.exports = moderators || DEFAULT_MODERATORS;
+export default moderators;
 
 
 // helpers //////////////////////

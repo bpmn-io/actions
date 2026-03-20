@@ -1,2 +1,2 @@
-require('../src/weekly-notes/test.js');
-require('../src/shared/test.js');
+import '../src/weekly-notes/test.js';
+import '../src/shared/test.js';
