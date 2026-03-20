@@ -1,4 +1,4 @@
-const { findIndex } = require('min-dash');
+import { findIndex } from 'min-dash';
 
 /**
  * @typedef { { login: string, fullName: string } } Assignee
@@ -19,6 +19,6 @@ function getNextAssignee(candidates, lastAssignee, offset = 1) {
   return candidates[(lastIndex + offset) % candidates.length];
 }
 
-module.exports = {
+export {
   getNextAssignee
 };

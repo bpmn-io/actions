@@ -2,6 +2,7 @@
   "name": "bpmn-io-actions",
   "version": "0.0.0",
   "description": "The custom github actions used by the bpmn-io team",
+  "type": "module",
   "scripts": {
     "all": "run-s lint test build",
     "lint": "eslint .",
