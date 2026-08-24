@@ -101,8 +101,8 @@ const CHECKS = [
   {
     id: 'uses-template',
     severity: 'error',
-    title: 'Pull request template used',
-    run({ template, body }) {
+    title: 'Use pull request template',
+    run({ template, templateUrl, body }) {
       if (template == null) {
         return { applicable: false };
       }
@@ -115,15 +115,16 @@ const CHECKS = [
 
       return {
         valid: false,
-        message: `Add these headers from the pull request template:\n${bullets(missingHeaders)}`
+        message: `Pull request is missing these headers from the ${templateReference(templateUrl)}:` +
+          `\n${bullets(missingHeaders.map(inlineCode))}`
       };
     }
   },
   {
     id: 'checklist-preserved',
     severity: 'error',
-    title: 'Template checklist preserved',
-    run({ template, body }) {
+    title: 'Preserve template checklist',
+    run({ template, templateUrl, body }) {
       if (template == null) {
         return { applicable: false };
       }
@@ -139,15 +140,15 @@ const CHECKS = [
 
       return {
         valid: false,
-        message: 'Restore these checklist items from the pull request template ' +
-          `(they may be checked or unchecked, but not removed):\n${bullets(missingItems)}`
+        message: `Pull request is missing these checklist items from the ${templateReference(templateUrl)} ` +
+          `(they may be checked or unchecked, but not removed):\n${bullets(missingItems.map(inlineCode))}`
       };
     }
   },
   {
     id: 'screenshot-media',
     severity: 'error',
-    title: 'Screenshot or video embedded',
+    title: 'Embed screenshot or video',
     run({ template, body }) {
       if (template == null) {
         return { applicable: false };
@@ -169,15 +170,15 @@ const CHECKS = [
 
       return {
         valid: false,
-        message: 'The checked "Screenshots added" item requires an inline GitHub ' +
-          'user-attachment image or video in the pull request body.'
+        message: 'Pull request checks "Screenshots added" but embeds no inline ' +
+          'GitHub user-attachment image or video.'
       };
     }
   },
   {
     id: 'clean-history',
     severity: 'error',
-    title: 'Clean branch history',
+    title: 'Clean up branch history',
     run({ commits }) {
       const mergeCommits = commits.filter(commit => commit.parentCount > 1);
       const fixupCommits = commits.filter(commit => {
@@ -188,21 +189,20 @@ const CHECKS = [
 
       if (commits.length > MAX_COMMITS) {
         parts.push(
-          `The branch has ${commits.length} commits, more than the ${MAX_COMMITS} ` +
-          'allowed. Rebase and squash the history into a small set of logical commits.'
+          `The branch has ${commits.length} commits, more than the ${MAX_COMMITS} allowed.`
         );
       }
 
       if (mergeCommits.length) {
         parts.push(
-          'Rebase the branch onto its base to remove these merge commits:\n' +
+          'The branch contains merge commits:\n' +
           bullets(mergeCommits.map(formatCommit))
         );
       }
 
       if (fixupCommits.length) {
         parts.push(
-          'Squash these work-in-progress commits into a clean history:\n' +
+          'The branch contains work-in-progress commits:\n' +
           bullets(fixupCommits.map(formatCommit))
         );
       }
@@ -217,7 +217,7 @@ const CHECKS = [
   {
     id: 'conventional-commits',
     severity: 'error',
-    title: 'Conventional commit messages',
+    title: 'Use conventional commits',
     run({ commits }) {
       const nonConventional = commits.filter(commit => {
         const subject = getSubject(commit.message);
@@ -231,15 +231,15 @@ const CHECKS = [
 
       return {
         valid: false,
-        message: 'Reword these commit subjects as `type(scope): description` ' +
-          `(see https://www.conventionalcommits.org):\n${bullets(nonConventional.map(formatCommit))}`
+        message: 'These commit messages do not follow ' +
+          `[conventional commits](https://www.conventionalcommits.org):\n${bullets(nonConventional.map(formatCommit))}`
       };
     }
   },
   {
     id: 'closes-statement',
     severity: 'warning',
-    title: 'Issue closed by a commit',
+    title: 'Close an issue from a commit',
     run({ commits }) {
       if (!commits.length || commits.some(commit => CLOSES_STATEMENT.test(getBody(commit.message)))) {
         return { valid: true };
@@ -247,7 +247,7 @@ const CHECKS = [
 
       return {
         valid: false,
-        message: 'Add a commit whose body closes the issue, for example `Closes #123`.'
+        message: 'No commit body closes an issue (for example `Closes #123`).'
       };
     }
   }
@@ -367,6 +367,24 @@ function getCheckAnnotations(checks) {
 
 function bullets(items) {
   return items.map(item => `- ${item}`).join('\n');
+}
+
+
+function inlineCode(value) {
+
+  // fence with more backticks than the longest run inside the value, and pad
+  // when it touches a backtick, so a backtick in template text cannot terminate
+  // the span early and let the list render as Markdown again
+  const longestRun = Math.max(0, ...[ ...value.matchAll(/`+/g) ].map(match => match[0].length));
+  const fence = '`'.repeat(longestRun + 1);
+  const pad = /^`|`$/.test(value) ? ' ' : '';
+
+  return `${fence}${pad}${value}${pad}${fence}`;
+}
+
+
+function templateReference(templateUrl) {
+  return templateUrl ? `[pull request template](${templateUrl})` : 'pull request template';
 }
 
 

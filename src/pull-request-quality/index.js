@@ -9,8 +9,6 @@ import {
   runChecks
 } from './util.js';
 
-const DEFINITION_OF_DONE_URL =
-  'https://github.com/bpmn-io/.github/blob/main/resources/DEFINITION_OF_DONE.md';
 const COMMUNITY_HEALTH_REPOSITORY = {
   owner: 'bpmn-io',
   repo: '.github'
@@ -42,11 +40,12 @@ async function run() {
   const template = await findTemplate(octokit.rest, {
     ...repo,
     ref: pullRequest.base.sha,
+    branch: pullRequest.base.ref,
     templatePath
   });
 
   if (template) {
-    core.setOutput('template-url', template.htmlUrl);
+    core.setOutput('template-url', template.exactUrl);
   } else if (isAnyEnabled(config, TEMPLATE_CHECK_IDS)) {
     core.info('No pull request template found; skipping template checks.');
   }
@@ -58,6 +57,7 @@ async function run() {
 
   const context = {
     template: template ? template.content : null,
+    templateUrl: template ? template.htmlUrl : null,
     body: pullRequest.body || '',
     commits
   };
@@ -89,7 +89,7 @@ async function run() {
 
   await writeJobSummary(errors);
 
-  core.setFailed('Pull request does not satisfy the required quality checks.');
+  core.setFailed('Pull request does not satisfy required quality checks.');
 }
 
 
@@ -124,31 +124,35 @@ async function getPullRequestCommits(octokit, { owner, repo, pullNumber }) {
 
 async function writeJobSummary(annotations) {
   try {
-    const summary = core.summary
-      .addHeading('Pull request quality checks failed', 2)
-      .addRaw(`Resolve the following so the pull request satisfies the [definition of done](${DEFINITION_OF_DONE_URL}).`)
-      .addEOL();
+
+    // build the summary as a single Markdown document: mixing `addHeading`
+    // (which emits raw HTML) with Markdown on adjacent lines opens an HTML block
+    // that swallows the following links and lists, rendering them as literal text
+    const lines = [
+      '## Pull request quality',
+      '',
+      'Pull request does not satisfy required quality checks. ' +
+        'Update your contribution, resolving the issues below.'
+    ];
 
     for (const { title, message } of annotations) {
-      summary
-        .addHeading(title, 3)
-        .addRaw(message)
-        .addEOL();
+      lines.push('', `### ${title}`, '', message);
     }
 
-    await summary.write();
+    await core.summary.addRaw(lines.join('\n')).addEOL().write();
   } catch (error) {
     core.debug(`Could not write job summary: ${error.message}`);
   }
 }
 
 
-async function findTemplate(rest, { owner, repo, ref, templatePath }) {
+async function findTemplate(rest, { owner, repo, ref, branch, templatePath }) {
   const paths = getTemplatePaths(templatePath);
   const consumerTemplate = await findTemplateInRepository(rest, {
     owner,
     repo,
     ref,
+    branch,
     paths
   });
 
@@ -163,7 +167,7 @@ async function findTemplate(rest, { owner, repo, ref, templatePath }) {
 }
 
 
-async function findTemplateInRepository(rest, { owner, repo, ref, paths }) {
+async function findTemplateInRepository(rest, { owner, repo, ref, branch, paths }) {
   for (const path of paths) {
     try {
       const { data } = await rest.repos.getContent({
@@ -179,7 +183,8 @@ async function findTemplateInRepository(rest, { owner, repo, ref, paths }) {
 
       return {
         content: Buffer.from(data.content, 'base64').toString('utf-8'),
-        htmlUrl: getExactTemplateUrl(data, ref)
+        htmlUrl: getTemplateUrl(data, branch),
+        exactUrl: data.html_url
       };
     } catch (error) {
       if (error.status === 404) {
@@ -192,13 +197,20 @@ async function findTemplateInRepository(rest, { owner, repo, ref, paths }) {
 }
 
 
-function getExactTemplateUrl(template, ref) {
+function getTemplateUrl(template, branch) {
 
-  // template.sha is the blob SHA, not a commit-ish, so pin to the requested
-  // commit ref when available and otherwise leave the API-provided URL untouched
-  return ref
-    ? template.html_url.replace(/\/blob\/[^/]+\//, `/blob/${ref}/`)
-    : template.html_url;
+  // the `data.html_url` is pinned to the exact commit the content was read from;
+  // link the base branch (for example `main`) instead so the summary URL stays
+  // human-readable and keeps resolving as the branch advances. encode each path
+  // segment (a valid ref may contain characters like `#`) and use a replacer
+  // callback so the branch is inserted literally
+  if (!branch) {
+    return template.html_url;
+  }
+
+  const encodedBranch = branch.split('/').map(encodeURIComponent).join('/');
+
+  return template.html_url.replace(/\/blob\/[^/]+\//, () => `/blob/${encodedBranch}/`);
 }
 
 
