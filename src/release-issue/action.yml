@@ -23,5 +23,5 @@ outputs:
   issue:
     description: 'The newly created issue in JSON format'
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'index.js'
