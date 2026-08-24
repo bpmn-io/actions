@@ -6,6 +6,8 @@ All notable changes to [@bpmn-io/actions](https://github.com/bpmn-io/actions) ar
 
 _**Note:** Yet to be released changes appear here._
 
+## 1.0.0
+
 * `FEAT`: version releases ([#49](https://github.com/bpmn-io/actions/pull/49))
 * `FEAT`: add `pull-request-quality` action ([#46](https://github.com/bpmn-io/actions/pull/46))
 * `DOCS`: correct `weekly-issue` description
