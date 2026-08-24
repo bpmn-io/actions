@@ -11,7 +11,10 @@ _**Note:** Yet to be released changes appear here._
 
 ## 0.1.1
 
-* `FIX`: properly handle missing last assignee ([#27](https://github.com/bpmn-io/actions/issues/27))
+* `FEAT`: output assigned roles from `weekly-notes` action (https://github.com/bpmn-io/actions/pull/23)
+* `FEAT`: add issue to the output (https://github.com/bpmn-io/actions/pull/25)
+* `FIX`: properly handle missing last assignee (https://github.com/bpmn-io/actions/issues/27)
+* `FIX`: correct assignee computation (https://github.com/bpmn-io/actions/pull/24)
 
 ## 0.1.0
 
