@@ -2,7 +2,10 @@ import bpmnIoPlugin from 'eslint-plugin-bpmn-io';
 
 const files = {
   ignored: [
-    'dist'
+    'release-issue/**',
+    'pull-request-quality/**',
+    'weekly-notes/**',
+    'setup/**'
   ]
 };
 
