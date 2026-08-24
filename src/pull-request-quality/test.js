@@ -145,11 +145,50 @@ Details
     });
 
 
+    it('should link the template and inline-code the missing headers', function() {
+      const { checks } = run({
+        template: '## Summary\n## Details',
+        templateUrl: 'https://example.com/T.md',
+        body: '## Summary'
+      });
+
+      expect(checks['uses-template'].message).to.equal(
+        'Pull request is missing these headers from the ' +
+        '[pull request template](https://example.com/T.md):\n- `## Details`'
+      );
+    });
+
+
+    it('should fence a header that itself contains backticks', function() {
+      const { checks } = run({ template: '## Run `npm test`', body: '' });
+
+      expect(checks['uses-template'].message).to.equal(
+        'Pull request is missing these headers from the pull request template:' +
+        '\n- `` ## Run `npm test` ``'
+      );
+    });
+
+
     it('should fail checklist-preserved when a checklist item is removed', function() {
       const { checks } = run({ template: '- [ ] Tests added', body: 'Nothing here' });
 
       expect(checks['checklist-preserved'].valid).to.be.false;
       expect(checks['checklist-preserved'].message).to.contain('- [ ] Tests added');
+    });
+
+
+    it('should link the template and inline-code the missing checklist items', function() {
+      const { checks } = run({
+        template: '- [ ] Run `npm test`',
+        templateUrl: 'https://example.com/T.md',
+        body: 'Nothing here'
+      });
+
+      expect(checks['checklist-preserved'].message).to.equal(
+        'Pull request is missing these checklist items from the ' +
+        '[pull request template](https://example.com/T.md) ' +
+        '(they may be checked or unchecked, but not removed):\n- `` - [ ] Run `npm test` ``'
+      );
     });
 
 
@@ -322,7 +361,7 @@ Details
       const closes = annotations.find(annotation => annotation.id === 'closes-statement');
 
       expect(closes.severity).to.equal('warning');
-      expect(closes.title).to.equal('Issue closed by a commit');
+      expect(closes.title).to.equal('Close an issue from a commit');
 
       const template = annotations.find(annotation => annotation.id === 'uses-template');
 
