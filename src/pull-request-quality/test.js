@@ -324,6 +324,24 @@ Details
     });
 
 
+    it('should accept a full issue URL as a closing statement', function() {
+      const commits = [
+        commit('c0ffee2', 'feat: add feature\n\nCloses https://github.com/bpmn-io/actions/issues/21')
+      ];
+
+      expect(run({ commits }).checks['closes-statement']).to.deep.equal({ valid: true });
+    });
+
+
+    it('should accept a cross-repository issue reference as a closing statement', function() {
+      const commits = [
+        commit('c0ffee3', 'feat: add feature\n\nCloses bpmn-io/actions#21')
+      ];
+
+      expect(run({ commits }).checks['closes-statement']).to.deep.equal({ valid: true });
+    });
+
+
     it('should skip disabled checks', function() {
       const commits = [ commit('merge02', 'Merge branch main', 2) ];
 
