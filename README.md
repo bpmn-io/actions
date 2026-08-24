@@ -19,7 +19,7 @@ Once corrected, a later run passes. The action never checks out or closes pull r
 
 ### Checks
 
-- `uses-template`: PR body contains every header of the template (explicit
+- `uses-template`: pull request uses the project template (explicit
   `template-path`, project-local, or `bpmn-io/.github`). Skipped if no template
   exists.
 - `checklist-preserved`: every template checklist item remains in the body
