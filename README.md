@@ -13,10 +13,9 @@ Ensures an opened pull request follows basic hygiene:
 * Pull request template used (if provided)
 * Clean and conventional commit history on branch
 
-Each failing check is reported as a check annotation, and failures that fail the
-gate are additionally collected into a job summary, so the contributor sees
-exactly what is broken and why, directly on the pull request. Once corrected, a
-later run passes. The action never closes pull requests.
+The action creates check annotations for failing checks and a job summary.
+Contributors shall use the information to refine their contribution.
+Once corrected, a later run passes. The action never checks out or closes pull requests.
 
 ### Checks
 
