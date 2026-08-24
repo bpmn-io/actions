@@ -6,8 +6,6 @@ All notable changes to [@bpmn-io/actions](https://github.com/bpmn-io/actions) ar
 
 _**Note:** Yet to be released changes appear here._
 
-## 0.2.0
-
 * `CHORE`: use `node@24`
 
 ## 0.1.1
