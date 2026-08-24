@@ -8,7 +8,7 @@ _**Note:** Yet to be released changes appear here._
 
 ## 1.0.0
 
-* `FEAT`: version releases ([#49](https://github.com/bpmn-io/actions/pull/49))
+* `FEAT`: version releases ([#49](https://github.com/bpmn-io/actions/pull/49), [#21](https://github.com/bpmn-io/actions/issues/21))
 * `FEAT`: add `pull-request-quality` action ([#46](https://github.com/bpmn-io/actions/pull/46))
 * `DOCS`: correct `weekly-issue` description
 * `CHORE`: use `node@24`
