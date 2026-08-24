@@ -1,0 +1,32 @@
+name: Move a major version tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target tag or ref the major should point at, e.g. v1.2.3'
+        required: true
+      major:
+        description: 'Major version tag to move, e.g. v1'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  move:
+    runs-on: ubuntu-latest
+    name: Move major tag
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Move tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git tag -f "${{ github.event.inputs.major }}" "${{ github.event.inputs.target }}"
+          git push origin "${{ github.event.inputs.major }}" --force

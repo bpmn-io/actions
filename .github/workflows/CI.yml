@@ -22,3 +22,11 @@ jobs:
       run: npm ci
     - name: Build
       run: npm run all
+    - name: Check bundle
+      run: |
+        if [ -n "$(git status --porcelain release-issue pull-request-quality weekly-notes setup)" ]; then
+          echo "::error::Committed bundles are out of date. Run 'npm run build' and commit the result."
+          git status --porcelain release-issue pull-request-quality weekly-notes setup
+          git --no-pager diff -- release-issue pull-request-quality weekly-notes setup
+          exit 1
+        fi

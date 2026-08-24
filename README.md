@@ -4,7 +4,7 @@
 
 This repository contains the GitHub Actions used by the bpmn-io team.
 
-The latest version is built and published to the `latest` branch continuously.
+Consume an action via `latest`, a version tag, or a commit SHA.
 
 ## `pull-request-quality`
 
@@ -237,3 +237,30 @@ jobs:
     - name: Build project
       run: npm run build
 ```
+
+## Build and Run
+
+Prepare the project by installing all dependencies:
+
+```sh
+npm install
+```
+
+Then, depending on your use-case, you may run any of the following commands:
+
+```sh
+# lint, test and build the actions
+npm run all
+
+# run all tests
+npm test
+
+# build the action bundles
+npm run build
+```
+
+## Releasing
+
+Run the **Publish a versioned release** workflow (`RELEASE_VERSION.yml`) with the
+target version (`X.Y.Z`, no leading `v`). It tags `main`, moves the `vX` alias, and
+publishes a GitHub release.

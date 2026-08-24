@@ -1,29 +1,22 @@
-name: Generate a build and push to another branch
+name: Update latest branch
 
 on:
   push:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
-  build:
+  update-latest:
     runs-on: ubuntu-latest
-    name: Build and Push
+    name: Fast-forward latest to main
     steps:
-      - name: git-checkout
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
-      - name: Install all dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build # The build command of your project
-    
-      - name: Push
-        uses: s0/git-publish-subdir-action@399aab378450f99b7de6767f62b0d1dbfcb58b53
-        env:
-          REPO: self
-          BRANCH: latest # The branch name where you want to push the assets
-          FOLDER: dist # The directory where your assets are generated
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub will automatically add this - you don't need to bother getting a token
-          MESSAGE: "Build: ({sha}) {msg}" # The commit message
+      - name: Update latest
+        run: git push origin HEAD:latest --force
