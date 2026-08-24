@@ -6,7 +6,12 @@ const MAX_COMMITS = 50;
 
 const CONVENTIONAL_COMMIT_SUBJECT = /^[a-z]+(\([^)\r\n]+\))?!?: .+/;
 const FIXUP_COMMIT_SUBJECT = /^(fixup|squash|amend)!|^(wip\b|\[wip\])/i;
-const CLOSES_STATEMENT = /(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#\d+/i;
+const CLOSES_ISSUE_REFERENCE = /(?:#\d+|GH-\d+|[\w.-]+\/[\w.-]+#\d+|https?:\/\/github\.com\/[\w.-]+\/[\w.-]+\/issues\/\d+)/
+  .source;
+const CLOSES_STATEMENT = new RegExp(
+  `(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\\s+${CLOSES_ISSUE_REFERENCE}`,
+  'i'
+);
 
 
 function getTemplatePaths(templatePath) {
