@@ -35,10 +35,9 @@ Once corrected, a later run passes. The action never checks out or closes pull r
 - `closes-statement` (warning only): at least one commit **body** closes an issue,
   for example `Closes #123`. Never fails the gate.
 
-All checks are enabled by default. Because Action inputs are flat strings, disable
-one by setting its `check-<id>` input to `false` (e.g. `check-clean-history:
-false`); internally these map to a per-check config keyed by the same ids as the
-`checks` output.
+All checks are enabled by default. Disable one by setting its `check-<id>` input
+to `false` (e.g. `check-clean-history: false`); internally these map to a per-check
+config keyed by the same ids as the `checks` output.
 
 ### Parameters
 
