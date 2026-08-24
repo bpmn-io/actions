@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Validate PR
-        uses: bpmn-io/actions/pull-request-quality@latest
+        uses: bpmn-io/actions/pull-request-quality@v1
 ```
 
 ### Permissions
@@ -120,7 +120,7 @@ jobs:
     steps:
      - if: contains(github.event.issue.labels.*.name, 'release')
        name: Create new Issue
-       uses: bpmn-io/actions/release-issue@latest
+       uses: bpmn-io/actions/release-issue@v1
        with:
          template-path: '.docs/RELEASE.md'
          package-path: 'app/package.json'
@@ -165,7 +165,7 @@ jobs:
     steps:
     -  name: Create new Issue
        id: create-issue
-       uses: bpmn-io/actions/weekly-notes@latest
+       uses: bpmn-io/actions/weekly-notes@v1
        with:
          template-path: '.docs/WEEKLY_TEMPLATE.md'
          roles: 'moderator,summary-writer,community-worker'
@@ -233,7 +233,7 @@ jobs:
     steps:
     ...
     - name: Project setup
-      uses: bpmn-io/actions/setup@latest
+      uses: bpmn-io/actions/setup@v1
     - name: Build project
       run: npm run build
 ```
