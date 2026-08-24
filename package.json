@@ -8,6 +8,7 @@
     "lint": "eslint .",
     "build": "run-s build:*",
     "build:release-issue": "ncc build src/release-issue/index.js -o dist/release-issue/ && copyfiles -f src/release-issue/action.yml dist/release-issue",
+    "build:pull-request-quality": "ncc build src/pull-request-quality/index.js -o dist/pull-request-quality/ && copyfiles -f src/pull-request-quality/action.yml dist/pull-request-quality",
     "build:weekly-notes": "ncc build src/weekly-notes/index.js -o dist/weekly-notes/ && copyfiles -f src/weekly-notes/action.yml dist/weekly-notes",
     "build:setup": "mkdir -p dist/setup && copyfiles -f src/setup/action.yml dist/setup",
     "test": "mocha test/test.js"

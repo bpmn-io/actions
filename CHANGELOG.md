@@ -6,6 +6,7 @@ All notable changes to [@bpmn-io/actions](https://github.com/bpmn-io/actions) ar
 
 _**Note:** Yet to be released changes appear here._
 
+* `FEAT`: add `pull-request-quality` action ([#46](https://github.com/bpmn-io/actions/pull/46))
 * `CHORE`: use `node@24`
 
 ## 0.1.1

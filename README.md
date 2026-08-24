@@ -6,6 +6,93 @@ This repository contains the GitHub Actions used by the bpmn-io team.
 
 The latest version is built and published to the `latest` branch continuously.
 
+## `pull-request-quality`
+
+Ensures an opened pull request follows basic hygiene:
+
+* Pull request template used (if provided)
+* Clean and conventional commit history on branch
+
+Each failing check is reported as a check annotation, and failures that fail the
+gate are additionally collected into a job summary, so the contributor sees
+exactly what is broken and why, directly on the pull request. Once corrected, a
+later run passes. The action never closes pull requests.
+
+### Checks
+
+- `uses-template`: PR body contains every header of the template (explicit
+  `template-path`, project-local, or `bpmn-io/.github`). Skipped if no template
+  exists.
+- `checklist-preserved`: every template checklist item remains in the body
+  (checked or unchecked, but not removed).
+- `screenshot-media`: when a checked `Screenshots added` item is present, the body
+  embeds inline media (GitHub user-attachment image or video); ordinary Markdown
+  links do not count.
+- `clean-history`: no merge, fixup, squash, or work-in-progress commits, and at
+  most 50 commits on the branch.
+- `conventional-commits`: every non-merge commit subject follows
+  [Conventional Commits](https://www.conventionalcommits.org)
+  (`type(optional scope): description`).
+- `closes-statement` (warning only): at least one commit **body** closes an issue,
+  for example `Closes #123`. Never fails the gate.
+
+All checks are enabled by default. Because Action inputs are flat strings, disable
+one by setting its `check-<id>` input to `false` (e.g. `check-clean-history:
+false`); internally these map to a per-check config keyed by the same ids as the
+`checks` output.
+
+### Parameters
+
+- `template-path`: optional alternative or fallback template path.
+- `check-<id>`: set to `false` to disable the check with that id (see Checks).
+  Default `true`.
+- `token`: token for GitHub API reads (template and commits). Defaults to
+  `github.token`.
+
+### Outputs
+
+- `valid`: `true` when every enabled, gating check passes; otherwise `false`.
+  Warn-only checks (`closes-statement`) never make this `false`.
+- `template-url`: The exact template URL used for validation, if a template was
+  found.
+- `checks`: A JSON map of check id to `{ "valid": boolean, "message"?: string }`
+  for checks that ran, or `{ "status": "skipped" }` for disabled or inapplicable
+  checks. The `message` is only present on failure.
+
+### Usage
+
+```yml
+# .github/workflows/PULL_REQUEST_QUALITY.yml
+name: Check pull request quality
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR
+        uses: bpmn-io/actions/pull-request-quality@latest
+```
+
+### Permissions
+
+The action runs on the standard `pull_request` trigger and never checks out or
+executes pull request code — it reads the template (from the base commit) and the
+pull request commits through the GitHub API only. It needs:
+
+- `contents: read` — to read the pull request template.
+- `pull-requests: read` — to list the pull request commits.
+
+Failures are reported as check annotations and a job summary, which need no
+additional token permissions and appear on every pull request, including
+contributions from forks.
+
 ## `release-issue`
 
 Automatically create the issue for the next release.
