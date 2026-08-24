@@ -1,5 +1,5 @@
 name: 'Open weekly issue'
-description: 'Create new release issue when the last one was closed'
+description: 'Create new weekly issue when the last one was closed'
 inputs:
   token:
     description: 'GITHUB_TOKEN or a repo scoped PAT'
