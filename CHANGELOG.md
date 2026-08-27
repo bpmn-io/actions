@@ -6,6 +6,8 @@ All notable changes to [@bpmn-io/actions](https://github.com/bpmn-io/actions) ar
 
 _**Note:** Yet to be released changes appear here._
 
+* `FEAT`: skip `pull-request-quality` checks for allow-listed automation authors ([#52](https://github.com/bpmn-io/actions/pull/52))
+
 ## 1.0.0
 
 * `FEAT`: version releases ([#49](https://github.com/bpmn-io/actions/pull/49), [#21](https://github.com/bpmn-io/actions/issues/21))

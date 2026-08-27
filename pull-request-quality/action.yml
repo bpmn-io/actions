@@ -8,6 +8,10 @@ inputs:
     description: 'Optional repository-relative pull request template path, tried before .github/PULL_REQUEST_TEMPLATE.md in the consumer repository and bpmn-io/.github'
     required: false
     default: ''
+  skip-authors:
+    description: 'Comma-separated list of GitHub logins for which the action shall be skipped'
+    required: false
+    default: 'renovate[bot],dependabot[bot]'
   check-uses-template:
     description: 'Require the pull request body to contain every header of the template'
     required: false

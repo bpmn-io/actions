@@ -36659,6 +36659,38 @@ const CHECK_IDS = CHECKS.map(check => check.id);
 
 
 /**
+ * Parse the comma-separated `skip-authors` input into a de-duplicated list of
+ * author logins.
+ *
+ * @param { string } [input]
+ *
+ * @return { string[] }
+ */
+function parseSkipAuthors(input) {
+  return [ ...new Set(
+    (input || '')
+      .split(',')
+      .map(login => login.trim())
+      .filter(Boolean)
+  ) ];
+}
+
+
+/**
+ * Whether the pull request author is allow-listed. Matches the login exactly, so
+ * bots such as Copilot (`copilot-swe-agent[bot]`) are never skipped implicitly.
+ *
+ * @param { string } [login]
+ * @param { string[] } skipAuthors
+ *
+ * @return { boolean }
+ */
+function isSkippedAuthor(login, skipAuthors) {
+  return skipAuthors.includes(login);
+}
+
+
+/**
  * Normalize the structured, symmetric check configuration into an object form
  * keyed by check id. Accepts boolean shorthand (`true`/`false`) and the object
  * form (`{ enabled, ... }`) so a check can grow configuration without a breaking
@@ -36899,6 +36931,24 @@ async function run() {
     throw new Error('This action must run for a pull request event.');
   }
 
+  // allow-listed authors (for example dependency bots) cannot fill out the pull
+  // request template; skip every check and report a pass. Matching is an exact
+  // login match, so bots such as Copilot are still checked.
+  const skipAuthors = parseSkipAuthors(getInput('skip-authors'));
+  const authorLogin = pullRequest.user?.login;
+
+  if (isSkippedAuthor(authorLogin, skipAuthors)) {
+    info(`Skipping checks for allow-listed author "${authorLogin}".`);
+
+    setOutput('valid', 'true');
+    setOutput('checks', JSON.stringify(
+      Object.fromEntries(CHECK_IDS.map(id => [ id, { status: 'skipped' } ]))
+    ));
+
+    await writeSkippedSummary(authorLogin);
+    return;
+  }
+
   const octokit = getOctokit(token);
   const repo = {
     owner: repository.owner.login,
@@ -36988,6 +37038,22 @@ async function getPullRequestCommits(octokit, { owner, repo, pullNumber }) {
     message: commit.commit.message,
     parentCount: commit.parents.length
   }));
+}
+
+
+async function writeSkippedSummary(authorLogin) {
+  try {
+    const lines = [
+      '## Pull request quality',
+      '',
+      `Skipped all quality checks because \`${authorLogin}\` is an allow-listed ` +
+        'author. The check reports a pass.'
+    ];
+
+    await summary.addRaw(lines.join('\n')).addEOL().write();
+  } catch (error) {
+    core_debug(`Could not write job summary: ${error.message}`);
+  }
 }
 
 
