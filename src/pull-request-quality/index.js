@@ -5,7 +5,9 @@ import {
   CHECK_IDS,
   getCheckAnnotations,
   getTemplatePaths,
+  isSkippedAuthor,
   normalizeChecksInput,
+  parseSkipAuthors,
   runChecks
 } from './util.js';
 
@@ -28,6 +30,24 @@ async function run() {
 
   if (!pullRequest || !repository) {
     throw new Error('This action must run for a pull request event.');
+  }
+
+  // allow-listed authors (for example dependency bots) cannot fill out the pull
+  // request template; skip every check and report a pass. Matching is an exact
+  // login match, so bots such as Copilot are still checked.
+  const skipAuthors = parseSkipAuthors(core.getInput('skip-authors'));
+  const authorLogin = pullRequest.user?.login;
+
+  if (isSkippedAuthor(authorLogin, skipAuthors)) {
+    core.info(`Skipping checks for allow-listed author "${authorLogin}".`);
+
+    core.setOutput('valid', 'true');
+    core.setOutput('checks', JSON.stringify(
+      Object.fromEntries(CHECK_IDS.map(id => [ id, { status: 'skipped' } ]))
+    ));
+
+    await writeSkippedSummary(authorLogin);
+    return;
   }
 
   const octokit = github.getOctokit(token);
@@ -119,6 +139,22 @@ async function getPullRequestCommits(octokit, { owner, repo, pullNumber }) {
     message: commit.commit.message,
     parentCount: commit.parents.length
   }));
+}
+
+
+async function writeSkippedSummary(authorLogin) {
+  try {
+    const lines = [
+      '## Pull request quality',
+      '',
+      `Skipped all quality checks because \`${authorLogin}\` is an allow-listed ` +
+        'author. The check reports a pass.'
+    ];
+
+    await core.summary.addRaw(lines.join('\n')).addEOL().write();
+  } catch (error) {
+    core.debug(`Could not write job summary: ${error.message}`);
+  }
 }
 
 

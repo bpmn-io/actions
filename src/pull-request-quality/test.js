@@ -7,7 +7,9 @@ import {
   getHeaders,
   getTemplatePaths,
   hasInlineAttachment,
+  isSkippedAuthor,
   normalizeChecksInput,
+  parseSkipAuthors,
   runChecks
 } from './util.js';
 
@@ -85,6 +87,54 @@ Details
     expect(hasInlineAttachment(
       'https://github.com/user-attachments/assets/12345678-1234-1234-1234-123456789abc'
     )).to.be.true;
+  });
+
+
+  describe('#parseSkipAuthors', function() {
+
+    it('should default to an empty list for empty input', function() {
+      expect(parseSkipAuthors()).to.deep.equal([]);
+      expect(parseSkipAuthors('')).to.deep.equal([]);
+      expect(parseSkipAuthors('  ,  ,')).to.deep.equal([]);
+    });
+
+
+    it('should split, trim, drop empty entries, and de-duplicate', function() {
+      expect(parseSkipAuthors(' renovate[bot] , dependabot[bot] , renovate[bot] ,')).to.deep.equal([
+        'renovate[bot]',
+        'dependabot[bot]'
+      ]);
+    });
+  });
+
+
+  describe('#isSkippedAuthor', function() {
+
+    const DEFAULT_SKIP_AUTHORS = parseSkipAuthors('renovate[bot],dependabot[bot]');
+
+    it('should match an allow-listed author', function() {
+      expect(isSkippedAuthor('renovate[bot]', DEFAULT_SKIP_AUTHORS)).to.be.true;
+      expect(isSkippedAuthor('dependabot[bot]', DEFAULT_SKIP_AUTHORS)).to.be.true;
+    });
+
+
+    it('should not match Copilot or human authors (exact login only)', function() {
+      expect(isSkippedAuthor('copilot-swe-agent[bot]', DEFAULT_SKIP_AUTHORS)).to.be.false;
+      expect(isSkippedAuthor('Copilot', DEFAULT_SKIP_AUTHORS)).to.be.false;
+      expect(isSkippedAuthor('some-human', DEFAULT_SKIP_AUTHORS)).to.be.false;
+    });
+
+
+    it('should not match a partial or suffix login', function() {
+      expect(isSkippedAuthor('renovate', DEFAULT_SKIP_AUTHORS)).to.be.false;
+      expect(isSkippedAuthor('renovate[bot]-fork', DEFAULT_SKIP_AUTHORS)).to.be.false;
+    });
+
+
+    it('should not match for an empty allow-list or missing login', function() {
+      expect(isSkippedAuthor('renovate[bot]', [])).to.be.false;
+      expect(isSkippedAuthor(undefined, DEFAULT_SKIP_AUTHORS)).to.be.false;
+    });
   });
 
 

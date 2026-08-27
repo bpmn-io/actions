@@ -262,6 +262,38 @@ const CHECK_IDS = CHECKS.map(check => check.id);
 
 
 /**
+ * Parse the comma-separated `skip-authors` input into a de-duplicated list of
+ * author logins.
+ *
+ * @param { string } [input]
+ *
+ * @return { string[] }
+ */
+function parseSkipAuthors(input) {
+  return [ ...new Set(
+    (input || '')
+      .split(',')
+      .map(login => login.trim())
+      .filter(Boolean)
+  ) ];
+}
+
+
+/**
+ * Whether the pull request author is allow-listed. Matches the login exactly, so
+ * bots such as Copilot (`copilot-swe-agent[bot]`) are never skipped implicitly.
+ *
+ * @param { string } [login]
+ * @param { string[] } skipAuthors
+ *
+ * @return { boolean }
+ */
+function isSkippedAuthor(login, skipAuthors) {
+  return skipAuthors.includes(login);
+}
+
+
+/**
  * Normalize the structured, symmetric check configuration into an object form
  * keyed by check id. Accepts boolean shorthand (`true`/`false`) and the object
  * form (`{ enabled, ... }`) so a check can grow configuration without a breaking
@@ -480,6 +512,8 @@ export {
   getHeaders,
   getTemplatePaths,
   hasInlineAttachment,
+  isSkippedAuthor,
   normalizeChecksInput,
+  parseSkipAuthors,
   runChecks
 };

@@ -42,6 +42,8 @@ config keyed by the same ids as the `checks` output.
 ### Parameters
 
 - `template-path`: optional alternative or fallback template path.
+- `skip-authors`: comma-separated author logins that are exempt from the check.
+  Defaults to `renovate[bot],dependabot[bot]`.
 - `check-<id>`: set to `false` to disable the check with that id (see Checks).
   Default `true`.
 - `token`: token for GitHub API reads (template and commits). Defaults to
