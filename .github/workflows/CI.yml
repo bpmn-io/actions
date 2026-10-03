@@ -24,9 +24,9 @@ jobs:
       run: npm run all
     - name: Check bundle
       run: |
-        if [ -n "$(git status --porcelain release-issue pull-request-quality weekly-notes setup)" ]; then
+        if [ -n "$(git status --porcelain release-issue pull-request-quality weekly-notes cla-reminder setup)" ]; then
           echo "::error::Committed bundles are out of date. Run 'npm run build' and commit the result."
-          git status --porcelain release-issue pull-request-quality weekly-notes setup
-          git --no-pager diff -- release-issue pull-request-quality weekly-notes setup
+          git status --porcelain release-issue pull-request-quality weekly-notes cla-reminder setup
+          git --no-pager diff -- release-issue pull-request-quality weekly-notes cla-reminder setup
           exit 1
         fi

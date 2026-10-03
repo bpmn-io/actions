@@ -6,6 +6,8 @@ All notable changes to [@bpmn-io/actions](https://github.com/bpmn-io/actions) ar
 
 _**Note:** Yet to be released changes appear here._
 
+* `FEAT`: add `cla-reminder` action ([#53](https://github.com/bpmn-io/actions/pull/53))
+
 ## 1.1.0
 
 * `FEAT`: skip `pull-request-quality` checks for allow-listed automation authors ([#52](https://github.com/bpmn-io/actions/pull/52))

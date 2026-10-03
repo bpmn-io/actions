@@ -10,6 +10,7 @@
     "build:release-issue": "ncc build src/release-issue/index.js -o release-issue/ && copyfiles -f src/release-issue/action.yml release-issue",
     "build:pull-request-quality": "ncc build src/pull-request-quality/index.js -o pull-request-quality/ && copyfiles -f src/pull-request-quality/action.yml pull-request-quality",
     "build:weekly-notes": "ncc build src/weekly-notes/index.js -o weekly-notes/ && copyfiles -f src/weekly-notes/action.yml weekly-notes",
+    "build:cla-reminder": "ncc build src/cla-reminder/index.js -o cla-reminder/ && copyfiles -f src/cla-reminder/action.yml cla-reminder",
     "build:setup": "mkdir -p setup && copyfiles -f src/setup/action.yml setup",
     "test": "mocha test/test.js"
   },
@@ -24,6 +25,8 @@
   "dependencies": {
     "@actions/core": "^3.0.0",
     "@actions/github": "^9.0.0",
+    "@octokit/plugin-retry": "^8.1.1",
+    "@octokit/plugin-throttling": "^11.0.5",
     "min-dash": "^5.0.0",
     "semver": "^7.7.4"
   },

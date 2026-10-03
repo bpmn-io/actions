@@ -1,0 +1,37 @@
+name: 'Remind about unsigned CLA'
+description: 'Remind contributors of open pull requests to sign the CLA and close pull requests that stay unsigned'
+inputs:
+  token:
+    description: 'Token of the acting user with access to every repository checked: pull-requests: write, issues: write and statuses: read'
+    required: true
+  owner:
+    description: 'Organization whose open pull requests are checked'
+    required: false
+    default: ${{ github.repository_owner }}
+  repositories:
+    description: 'Additional repositories as owner/name, separated by commas or new lines, for example of other organizations'
+    required: false
+    default: ''
+  reminder-days:
+    description: 'Comma-separated days after the CLA invitation on which to remind the contributor'
+    required: false
+    default: '7,14'
+  close-after-days:
+    description: 'Days after the CLA invitation after which to close the pull request; always follows the last reminder'
+    required: false
+    default: '21'
+  exempt-label:
+    description: 'Pull requests with this label are never reminded or closed'
+    required: false
+    default: 'cla exempt'
+  unsigned-label:
+    description: 'Label for pull requests without a signed CLA, added as soon as it is missing and removed once it is signed; empty to use none'
+    required: false
+    default: 'cla not signed'
+  dry-run:
+    description: 'Only log what would be done, without labeling, commenting on or closing pull requests'
+    required: false
+    default: 'false'
+runs:
+  using: 'node24'
+  main: 'index.js'

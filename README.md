@@ -208,6 +208,89 @@ labels:
 ```
 
 
+## `cla-reminder`
+
+Follows up on [CLA Assistant](https://cla-assistant.io) invitations across all
+repositories of an organization, and optionally across additional repositories
+of other organizations. Run it on a schedule, for example daily.
+
+For every open pull request with a CLA invitation, the action looks at the
+`license/cla` status of its latest commit. If it is not `success`, the action:
+
+1. labels the pull request with the `unsigned-label`, and removes the label
+   again as soon as the CLA is signed,
+2. reminds the author to sign the CLA on each of the `reminder-days`, and
+3. closes the pull request with an explanatory comment on `close-after-days`.
+
+Days count from the CLA invitation. Each step waits at least the scheduled
+gap after the previous one, so pull requests that have been pending for a
+long time still get every reminder before they are closed. The action keeps
+no state: it recognizes its earlier steps by hidden markers in its comments,
+and never closes a pull request twice, so a maintainer can safely reopen one.
+
+The CLA status is the only criterion: whoever has not signed gets the same
+reminders, bots and maintainers included. Pull requests with the `exempt-label`
+are never touched. Only comments and events of the token's own user count as
+steps already taken, so nobody else can advance or stop the schedule. The
+comment that closes a pull request is posted last, so a failure while closing
+is retried on the next run. Writes are spaced out and retried when
+GitHub asks to slow down.
+
+### Parameters
+
+- `token`: personal access token of the acting (bot) user with access to all
+  checked repositories, allowed to comment on, label, and close pull requests
+  and to read commit statuses. Required: `github.token` only covers the current
+  repository and cannot identify a user, so it is not sufficient.
+- `owner`: organization to check. Defaults to the owner of the current repository.
+- `repositories`: additional repositories as `owner/name`, separated by commas
+  or new lines, for example of other organizations. Default: none.
+- `reminder-days`: comma-separated days after the invitation to remind on.
+  Default: `7,14`.
+- `close-after-days`: days after the invitation to close on. Default: `21`.
+- `exempt-label`: pull requests with this label are skipped entirely, also
+  regarding the `unsigned-label`, which has to be removed by hand when
+  exempting a pull request that already has it. Default: `cla exempt`.
+- `unsigned-label`: label for pull requests without a signed CLA, for example
+  to hide them from a board; empty to use none. Default: `cla not signed`.
+- `dry-run`: only report what would be done. Default: `false`.
+
+### Outputs
+
+*None*
+
+### Usage
+
+```yml
+# .github/workflows/CLA_REMINDER.yml
+name: CLA reminder
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        type: boolean
+        default: true
+
+permissions: {}
+
+# never run two checks at the same time, they would post duplicate comments
+concurrency:
+  group: cla-reminder
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remind about unsigned CLA
+        uses: bpmn-io/actions/cla-reminder@v1
+        with:
+          token: ${{ secrets.BPMN_IO_TOKEN }}
+          repositories: 'camunda/camunda-modeler'
+          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run }}
+```
+
 ## `setup`
 
 Setup your runner so things just work.
