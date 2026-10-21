@@ -6,6 +6,8 @@ All notable changes to [@bpmn-io/actions](https://github.com/bpmn-io/actions) ar
 
 _**Note:** Yet to be released changes appear here._
 
+* `DEPS`: update to `@actions/core@3.0.1`
+
 ## 1.1.0
 
 * `FEAT`: skip `pull-request-quality` checks for allow-listed automation authors ([#52](https://github.com/bpmn-io/actions/pull/52))
