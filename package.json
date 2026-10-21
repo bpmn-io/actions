@@ -24,7 +24,7 @@
   "dependencies": {
     "@actions/core": "^3.0.1",
     "@actions/github": "^9.1.1",
-    "min-dash": "^5.0.0",
+    "min-dash": "^5.1.0",
     "semver": "^7.7.4"
   },
   "devDependencies": {

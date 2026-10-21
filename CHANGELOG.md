@@ -8,6 +8,7 @@ _**Note:** Yet to be released changes appear here._
 
 * `DEPS`: update to `@actions/core@3.0.1`
 * `DEPS`: update to `@actions/github@9.1.1`
+* `DEPS`: update to `min-dash@5.1.0`
 
 ## 1.1.0
 
