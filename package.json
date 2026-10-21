@@ -22,7 +22,7 @@
   },
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "@actions/core": "^3.0.0",
+    "@actions/core": "^3.0.1",
     "@actions/github": "^9.0.0",
     "min-dash": "^5.0.0",
     "semver": "^7.7.4"
