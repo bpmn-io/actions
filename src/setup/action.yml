@@ -9,6 +9,12 @@ runs:
       run: |
         SANDBOX_LOCATION=/opt/google/chrome/chrome-sandbox
 
+        # Chrome is not installed on all runners, i.e. Linux ARM
+        if [ ! -f "$SANDBOX_LOCATION" ]; then
+          echo "$SANDBOX_LOCATION not found, skipping"
+          exit 0
+        fi
+
         sudo chown root $SANDBOX_LOCATION
         sudo chmod 4755 $SANDBOX_LOCATION
 

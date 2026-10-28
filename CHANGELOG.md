@@ -6,6 +6,7 @@ All notable changes to [@bpmn-io/actions](https://github.com/bpmn-io/actions) ar
 
 _**Note:** Yet to be released changes appear here._
 
+* `FIX`: `setup` does not fail when Chrome is not installed, i.e. on Linux ARM runners
 * `DEPS`: update to `@actions/core@3.0.1`
 * `DEPS`: update to `@actions/github@9.1.1`
 * `DEPS`: update to `min-dash@5.1.0`
