@@ -10,6 +10,7 @@
     "build:release-issue": "ncc build src/release-issue/index.js -o release-issue/ && copyfiles -f src/release-issue/action.yml release-issue",
     "build:pull-request-quality": "ncc build src/pull-request-quality/index.js -o pull-request-quality/ && copyfiles -f src/pull-request-quality/action.yml pull-request-quality",
     "build:weekly-notes": "ncc build src/weekly-notes/index.js -o weekly-notes/ && copyfiles -f src/weekly-notes/action.yml weekly-notes",
+    "build:sync-branches": "ncc build src/sync-branches/index.js -o sync-branches/ && copyfiles -f src/sync-branches/action.yml sync-branches",
     "build:setup": "mkdir -p setup && copyfiles -f src/setup/action.yml setup",
     "test": "mocha test/test.js"
   },

@@ -208,6 +208,52 @@ labels:
 ```
 
 
+## `sync-branches`
+
+Opens a pull request merging one branch into another when the source branch has commits the target branch lacks. Does nothing if the target is up to date or a pull request from the source into the target is already open.
+
+Branches are configurable, e.g. use `target: live` to merge into `live`.
+
+### Parameters
+
+- `source`: Branch to merge from. Default: `main`
+- `target`: Branch to merge into. Default: `develop`
+- `title`: Pull request title. Supports `{{source}}` and `{{target}}` placeholders. Default: `chore: merge {{source}} into {{target}}`
+- `body`: Pull request body. Supports `{{source}}` and `{{target}}` placeholders.
+- `token`: Token used to create the pull request. Defaults to `github.token`.
+
+### Outputs
+
+- `created`: `true` if a pull request got created, otherwise `false`
+- `pull-request-url`: URL of the created, or already existing, pull request
+- `pull-request-number`: Number of the created, or already existing, pull request
+
+### Usage
+
+```yml
+# .github/workflows/SYNC_BRANCHES.yml
+name: Sync branches
+on:
+  push:
+    branches: [ main ]
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: bpmn-io/actions/sync-branches@v1
+        with:
+          target: live # optional, defaults to develop
+```
+
+### Notes
+
+- The action needs no checkout. It requires `pull-requests: write` and the repository setting _Allow GitHub Actions to create and approve pull requests_.
+- Pull requests created with the default `GITHUB_TOKEN` do not trigger other workflows (e.g. CI). Pass a PAT or app token via `token` if you need that.
+- Merge the pull request using a **merge commit**. Squash or rebase merges leave the source commits "unmerged", so the action opens a new pull request on the next run.
+
 ## `setup`
 
 Setup your runner so things just work.

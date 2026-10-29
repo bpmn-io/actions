@@ -5,6 +5,7 @@ const files = {
     'release-issue/**',
     'pull-request-quality/**',
     'weekly-notes/**',
+    'sync-branches/**',
     'setup/**'
   ]
 };
