@@ -1,0 +1,32 @@
+name: 'Sync branches'
+description: 'Open a pull request merging a source branch into a target branch when the source has commits the target lacks'
+inputs:
+  token:
+    description: 'GITHUB_TOKEN or a repository-scoped token with contents: read and pull-requests: write'
+    default: ${{ github.token }}
+  source:
+    description: 'Branch to merge from'
+    required: false
+    default: 'main'
+  target:
+    description: 'Branch to merge into'
+    required: false
+    default: 'develop'
+  title:
+    description: 'Pull request title. Supports the {{source}} and {{target}} placeholders'
+    required: false
+    default: 'chore: merge {{source}} into {{target}}'
+  body:
+    description: 'Pull request body. Supports the {{source}} and {{target}} placeholders'
+    required: false
+    default: 'Merges changes from `{{source}}` into `{{target}}`.'
+outputs:
+  created:
+    description: '`true` if a pull request got created, otherwise `false`'
+  pull-request-url:
+    description: 'URL of the created, or already existing, pull request'
+  pull-request-number:
+    description: 'Number of the created, or already existing, pull request'
+runs:
+  using: 'node24'
+  main: 'index.js'
